@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Budget Tracker</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <div class="auth-container">
+            <div class="auth-sidebar">
+                <div class="auth-sidebar-content">
+                    <h1>Budget Tracker</h1>
+                    <p class="tagline">Take control of your finances</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Track your spending</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Create budgets</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Get smart recommendations</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Generate financial reports</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auth-form-container">
+                <div class="auth-form-wrapper">
+                    <h2>Welcome Back</h2>
+                    <p class="auth-subtitle">Sign in to continue to Budget Tracker</p>
+                    
+                    <form id="login-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="remember" name="remember">
+                                <label for="remember">Remember me</label>
+                            </div>
+                            <a href="#" class="forgot-password">Forgot password?</a>
+                        </div>
+                        
+                        <div id="login-error" class="error-message"></div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        <p>Don't have an account? <a href="/register">Sign up</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Inline login script to avoid any loading or ordering issues
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Standalone login page loaded');
+        
+        const loginForm = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMsg = document.getElementById('login-error');
+        
+        // Add password visibility toggle
+        const togglePassword = document.createElement('button');
+        togglePassword.type = 'button';
+        togglePassword.className = 'password-toggle';
+        togglePassword.innerHTML = '<i class="fas fa-eye"></i>';
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+        
+        if (passwordInput) {
+            const parentDiv = passwordInput.parentElement;
+            parentDiv.style.position = 'relative';
+            togglePassword.style.position = 'absolute';
+            togglePassword.style.right = '10px';
+            togglePassword.style.top = '50%';
+            togglePassword.style.transform = 'translateY(-50%)';
+            togglePassword.style.border = 'none';
+            togglePassword.style.background = 'transparent';
+            togglePassword.style.cursor = 'pointer';
+            parentDiv.appendChild(togglePassword);
+        }
+        
+        if (loginForm) {
+            loginForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                console.log('Login form submitted - preventDefault called');
+                
+                // Clear previous error
+                if (errorMsg) errorMsg.textContent = '';
+                
+                // Validate input
+                if (!usernameInput || !passwordInput) {
+                    console.error('Form inputs not found');
+                    if (errorMsg) {
+                        errorMsg.textContent = 'Form error: Inputs not found';
+                        errorMsg.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                if (!usernameInput.value || !passwordInput.value) {
+                    console.log('Missing username or password');
+                    if (errorMsg) {
+                        errorMsg.textContent = 'Username and password are required';
+                        errorMsg.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Logging in...';
+                }
+                
+                try {
+                    // Send login request
+                    console.log('Sending login request to /api/auth/login');
+                    console.log('Request payload:', {
+                        username: usernameInput.value,
+                        password: '********' // Don't log actual password
+                    });
+                    
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: usernameInput.value,
+                            password: passwordInput.value
+                        })
+                    });
+                    
+                    console.log('Login response status:', response.status);
+                    
+                    // Try to parse response
+                    let data;
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        data = await response.json();
+                        console.log('Login response data:', data);
+                    } else {
+                        const text = await response.text();
+                        console.warn('Non-JSON response:', text);
+                        data = { error: 'Unexpected response format from server' };
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || `Login failed with status ${response.status}`);
+                    }
+                    
+                    // Store auth token and user data
+                    console.log('Storing auth token and user data');
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
+                    
+                    // Redirect to dashboard
+                    console.log('Redirecting to dashboard');
+                    window.location.href = '/dashboard';
+                    
+                } catch (error) {
+                    console.error('Complete login error details:', error);
+                    if (errorMsg) {
+                        errorMsg.textContent = error.message || 'Login failed. Please try again.';
+                        errorMsg.style.display = 'block';
+                    }
+                } finally {
+                    // Reset button state
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Login';
+                    }
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html> 

@@ -1,12 +1,24 @@
 // router.js - Client-side routing for Budget Tracker
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Router initialized');
+    
     // Route configuration
     const routes = {
         '/': () => loadTemplate('home'),
         '/login': () => loadTemplate('login'),
+        '/login.html': () => loadTemplate('login'),
         '/register': () => loadTemplate('register'),
+        '/register.html': () => loadTemplate('register'),
         '/dashboard': () => {
+            // Ensure user is authenticated before loading dashboard
+            if (localStorage.getItem('auth_token')) {
+                loadTemplate('dashboard');
+            } else {
+                window.location.href = '/login';
+            }
+        },
+        '/dashboard.html': () => {
             // Ensure user is authenticated before loading dashboard
             if (localStorage.getItem('auth_token')) {
                 loadTemplate('dashboard');
@@ -53,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load templates dynamically
     async function loadTemplate(templateName) {
+        console.log(`Loading template: ${templateName}`);
         const contentContainer = document.getElementById('content');
         
         try {
@@ -62,6 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Clear previous content and insert new template
             contentContainer.innerHTML = templateHTML;
+            
+            console.log(`Template ${templateName} loaded successfully`);
 
             // Dynamically load corresponding script if it exists
             try {
@@ -70,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const scriptElement = document.createElement('script');
                     scriptElement.src = `/static/js/${templateName}.js`;
                     document.body.appendChild(scriptElement);
+                    console.log(`Loaded script for ${templateName}`);
                 }
             } catch (scriptError) {
                 console.log(`No specific script found for ${templateName}`);
@@ -89,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle navigation
     function navigate(path) {
+        console.log(`Navigating to: ${path}`);
         // Update browser history
         history.pushState(null, '', path);
         
@@ -98,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             route();
         } else {
             // Default to home or 404
+            console.log(`No route found for ${path}, defaulting to home`);
             routes['/']();
         }
     }
@@ -105,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle link clicks
     document.addEventListener('click', (e) => {
         const target = e.target.closest('a');
-        if (target && target.getAttribute('href').startsWith('/')) {
+        if (target && target.getAttribute('href') && target.getAttribute('href').startsWith('/')) {
             e.preventDefault();
             navigate(target.getAttribute('href'));
         }
@@ -114,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle browser back/forward
     window.addEventListener('popstate', () => {
         const path = window.location.pathname;
+        console.log(`Popstate detected, path: ${path}`);
         const route = routes[path];
         if (route) {
             route();
@@ -124,9 +143,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial route load
     const initialPath = window.location.pathname;
+    console.log(`Initial path: ${initialPath}`);
     if (routes[initialPath]) {
         routes[initialPath]();
     } else {
+        console.log(`No route found for initial path ${initialPath}, defaulting to home`);
         routes['/']();
     }
 });

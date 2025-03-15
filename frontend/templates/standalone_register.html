@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Budget Tracker</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <div class="auth-container">
+            <div class="auth-sidebar">
+                <div class="auth-sidebar-content">
+                    <h1>Budget Tracker</h1>
+                    <p class="tagline">Take control of your finances</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Track your spending</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Create budgets</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Get smart recommendations</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Generate financial reports</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auth-form-container">
+                <div class="auth-form-wrapper">
+                    <h2>Create an Account</h2>
+                    <p class="auth-subtitle">Sign up to start managing your finances</p>
+                    
+                    <form id="register-form" class="auth-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first-name">First Name</label>
+                                <input type="text" id="first-name" name="first_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name">Last Name</label>
+                                <input type="text" id="last-name" name="last_name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="username">Username*</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address*</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password*</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password*</label>
+                            <input type="password" id="confirm-password" name="confirm_password" required>
+                        </div>
+                        
+                        <div class="form-group terms">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">I agree to the Terms of Service and Privacy Policy</label>
+                        </div>
+                        
+                        <div id="register-error" class="error-message"></div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="/login">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Inline register script to avoid any loading or ordering issues
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Standalone register page loaded');
+        
+        const registerForm = document.getElementById('register-form');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const firstNameInput = document.getElementById('first-name');
+        const lastNameInput = document.getElementById('last-name');
+        const termsCheckbox = document.getElementById('terms');
+        const errorMsg = document.getElementById('register-error');
+        
+        // Add password visibility toggles
+        function createPasswordToggle(inputField) {
+            const togglePassword = document.createElement('button');
+            togglePassword.type = 'button';
+            togglePassword.className = 'password-toggle';
+            togglePassword.innerHTML = '<i class="fas fa-eye"></i>';
+            togglePassword.addEventListener('click', function() {
+                const type = inputField.getAttribute('type') === 'password' ? 'text' : 'password';
+                inputField.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            const parentDiv = inputField.parentElement;
+            parentDiv.style.position = 'relative';
+            togglePassword.style.position = 'absolute';
+            togglePassword.style.right = '10px';
+            togglePassword.style.top = '50%';
+            togglePassword.style.transform = 'translateY(-50%)';
+            togglePassword.style.border = 'none';
+            togglePassword.style.background = 'transparent';
+            togglePassword.style.cursor = 'pointer';
+            parentDiv.appendChild(togglePassword);
+        }
+        
+        // Add password toggles to both password fields
+        if (passwordInput) {
+            createPasswordToggle(passwordInput);
+        }
+        
+        if (confirmPasswordInput) {
+            createPasswordToggle(confirmPasswordInput);
+        }
+        
+        if (registerForm) {
+            registerForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                console.log('Register form submitted - preventDefault called');
+                
+                // Clear previous error
+                if (errorMsg) errorMsg.textContent = '';
+                
+                // Validate input
+                if (!usernameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+                    console.error('Form inputs not found');
+                    if (errorMsg) {
+                        errorMsg.textContent = 'Form error: Inputs not found';
+                        errorMsg.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                if (!usernameInput.value || !emailInput.value || !passwordInput.value) {
+                    console.log('Missing required fields');
+                    if (errorMsg) {
+                        errorMsg.textContent = 'All fields marked with * are required';
+                        errorMsg.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    console.log('Passwords do not match');
+                    if (errorMsg) {
+                        errorMsg.textContent = 'Passwords do not match';
+                        errorMsg.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                if (!termsCheckbox.checked) {
+                    console.log('Terms not accepted');
+                    if (errorMsg) {
+                        errorMsg.textContent = 'You must agree to the Terms of Service and Privacy Policy';
+                        errorMsg.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = registerForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Creating Account...';
+                }
+                
+                try {
+                    // Send register request
+                    console.log('Sending register request to /api/auth/register');
+                    
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: usernameInput.value,
+                            email: emailInput.value,
+                            password: passwordInput.value,
+                            first_name: firstNameInput ? firstNameInput.value : '',
+                            last_name: lastNameInput ? lastNameInput.value : ''
+                        })
+                    });
+                    
+                    console.log('Register response status:', response.status);
+                    
+                    // Try to parse response
+                    let data;
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        data = await response.json();
+                        console.log('Register response data:', data);
+                    } else {
+                        const text = await response.text();
+                        console.warn('Non-JSON response:', text);
+                        data = { error: 'Unexpected response format from server' };
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || `Registration failed with status ${response.status}`);
+                    }
+                    
+                    // Store auth token and user data
+                    console.log('Storing auth token and user data');
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
+                    
+                    // Redirect to dashboard
+                    console.log('Redirecting to dashboard');
+                    window.location.href = '/dashboard';
+                    
+                } catch (error) {
+                    console.error('Complete registration error details:', error);
+                    if (errorMsg) {
+                        errorMsg.textContent = error.message || 'Registration failed. Please try again.';
+                        errorMsg.style.display = 'block';
+                    }
+                } finally {
+                    // Reset button state
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Create Account';
+                    }
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html> 

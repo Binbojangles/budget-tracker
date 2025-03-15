@@ -92,9 +92,28 @@ def create_app(config=None):
         app.logger.info(f'Request Path: {request.path}')
         app.logger.info(f'Request Method: {request.method}')
         
-        # Log form data (be careful with sensitive info)
+        # Log request data more comprehensively
         if request.method == 'POST':
-            app.logger.info(f'Request Form Data: {request.form}')
+            # Log form data
+            if request.form:
+                app.logger.info(f'Request Form Data: {request.form}')
+            
+            # Log JSON data
+            try:
+                if request.json:
+                    app.logger.info(f'Request JSON Data: {request.json}')
+            except Exception as e:
+                app.logger.info(f'No valid JSON in request: {str(e)}')
+            
+            # Log raw data
+            if request.data:
+                app.logger.info(f'Request Raw Data: {request.data[:1000]}')  # Truncate if too large
+                
+    @app.after_request
+    def log_response_info(response):
+        app.logger.info(f'Response Status: {response.status}')
+        app.logger.info(f'Response Headers: {response.headers}')
+        return response
     
     # Health check route
     @app.route('/api/health')
@@ -105,21 +124,48 @@ def create_app(config=None):
     @app.route('/static/<path:path>')
     def send_static(path):
         return send_from_directory(static_dir, path)
+        
+    # Add direct routes for HTML templates
+    @app.route('/login.html')
+    @app.route('/login')
+    def login_page():
+        return render_template('standalone_login.html')
+        
+    @app.route('/register.html')
+    @app.route('/register')
+    def register_page():
+        return render_template('standalone_register.html')
+        
+    @app.route('/dashboard.html')
+    @app.route('/dashboard')
+    def dashboard_page():
+        return render_template('standalone_dashboard.html')
+        
+    @app.route('/accounts.html')
+    @app.route('/accounts')
+    def accounts_page():
+        return render_template('standalone_accounts.html')
+        
+    @app.route('/transactions.html')
+    @app.route('/transactions')
+    def transactions_page():
+        return render_template('standalone_transactions.html')
+        
+    @app.route('/budgets.html')
+    @app.route('/budgets')
+    def budgets_page():
+        return render_template('standalone_budgets.html')
+        
+    @app.route('/reports.html')
+    @app.route('/reports')
+    def reports_page():
+        return render_template('standalone_reports.html')
 
-    @app.route('/', defaults={'path': ''})
-    @app.route('/<path:path>')
-    def serve_frontend(path):
-        if path.startswith('api/') or path.startswith('static/'):
-         # Serve API routes and static files as usual
-            return app.send_static_file(path)
-        else:
-        # Serve index.html for all other routes
-            return render_template('index.html')
-    
-    # Fallback route for any unmatched routes
-    @app.route('/<path:path>')
-    def catch_all(path):
-        return render_template('index.html'), 200
+    # Root route - serve login page
+    @app.route('/')
+    def index():
+        # Serve the login page as the default landing page
+        return render_template('standalone_login.html')
     
     # Create tables
     with app.app_context():

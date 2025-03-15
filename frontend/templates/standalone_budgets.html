@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgets - Budget Tracker</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="stylesheet" href="/static/css/budgets.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <div class="logo">
+                <h1>Budget Tracker</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/dashboard" data-force-reload="true"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="/accounts" data-force-reload="true"><i class="fas fa-wallet"></i> Accounts</a></li>
+                    <li><a href="/transactions" data-force-reload="true"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                    <li><a href="/budgets" class="active" data-force-reload="true"><i class="fas fa-chart-pie"></i> Budgets</a></li>
+                    <li><a href="/reports" data-force-reload="true"><i class="fas fa-chart-line"></i> Reports</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info">
+                    <span id="user-name">Loading...</span>
+                    <img src="/static/img/default-avatar.png" alt="User Avatar" class="avatar">
+                </div>
+                <div class="dropdown-menu">
+                    <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+                    <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main id="budgets-container" class="main-content">
+            <div class="budgets-container">
+                <!-- Error Container -->
+                <div id="error-container" class="error-container" style="display: none;">
+                    <div id="error-message" class="error-message"></div>
+                </div>
+
+                <!-- Success Container -->
+                <div id="success-container" class="success-container" style="display: none;">
+                    <div id="success-message" class="success-message"></div>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div id="budgets-loading" class="loading-indicator" style="display: flex;">
+                    <div class="spinner"></div>
+                    <p>Loading your budgets...</p>
+                </div>
+
+                <!-- Main Budgets Content (Initially Hidden) -->
+                <div id="budgets-content" style="display: none;">
+                    <section class="budgets-header dashboard-card">
+                        <div class="card-header">
+                            <h2>Budget Management</h2>
+                            <div class="budgets-actions">
+                                <button id="create-budget-btn" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Create New Budget
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Current Budget Overview -->
+                    <section class="current-budget-overview dashboard-card">
+                        <div class="card-header">
+                            <h2>Current Budget Overview</h2>
+                            <div class="budget-period-selector">
+                                <select id="budget-period-select">
+                                    <option value="current">Current Month</option>
+                                    <option value="previous">Previous Month</option>
+                                    <option value="next">Next Month</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="summary-cards">
+                            <div class="summary-card">
+                                <h3>Total Budget</h3>
+                                <p id="total-budget" class="card-value">$0.00</p>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Total Spent</h3>
+                                <p id="total-spent" class="card-value negative">$0.00</p>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Remaining Budget</h3>
+                                <p id="remaining-budget" class="card-value">$0.00</p>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Budget Progress</h3>
+                                <div id="budget-progress" class="progress-container">
+                                    <div class="progress-bar" style="width: 0%"></div>
+                                    <span class="progress-text">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Budget Categories -->
+                    <section class="budget-categories-section dashboard-card">
+                        <div class="card-header">
+                            <h2>Budget Categories</h2>
+                            <button id="manage-categories-btn" class="btn btn-secondary">Manage Categories</button>
+                        </div>
+                        <div class="card-content">
+                            <div id="categories-list" class="categories-list">
+                                <!-- Dynamically populated by JavaScript -->
+                                <div class="loading-placeholder">Loading budget categories...</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Budget vs. Actual Visualization -->
+                    <section class="budget-visualization dashboard-card">
+                        <div class="card-header">
+                            <h2>Budget vs. Actual</h2>
+                            <div class="chart-period-selector">
+                                <button class="btn btn-sm period-btn active" data-period="monthly">Monthly</button>
+                                <button class="btn btn-sm period-btn" data-period="quarterly">Quarterly</button>
+                                <button class="btn btn-sm period-btn" data-period="yearly">Yearly</button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div id="budget-chart-container" class="chart-container">
+                                <canvas id="budget-chart"></canvas>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Create/Edit Budget Modal -->
+                <div id="budget-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h2 id="budget-modal-title">Create New Budget</h2>
+                        <form id="budget-form">
+                            <div class="form-group">
+                                <label for="budget-month">Budget Month*</label>
+                                <input type="month" id="budget-month" required>
+                            </div>
+                            <div id="budget-categories-container">
+                                <!-- Dynamically populated by JavaScript -->
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" id="add-category-btn" class="btn btn-secondary">
+                                    <i class="fas fa-plus"></i> Add Category
+                                </button>
+                            </div>
+                            <div class="form-group total-section">
+                                <label>Total Budget</label>
+                                <p id="budget-total" class="total-amount">$0.00</p>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" id="cancel-budget-btn" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" id="save-budget-btn" class="btn btn-primary">Save Budget</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Manage Categories Modal -->
+                <div id="categories-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h2>Manage Budget Categories</h2>
+                        <div class="categories-manager">
+                            <ul id="category-list" class="category-list">
+                                <!-- Dynamically populated by JavaScript -->
+                            </ul>
+                            <div class="form-group">
+                                <label for="new-category-name">New Category</label>
+                                <div class="new-category-input">
+                                    <input type="text" id="new-category-name" placeholder="Enter category name">
+                                    <button type="button" id="add-new-category-btn" class="btn btn-primary">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="close-categories-btn" class="btn btn-primary">Done</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/budgets.js"></script>
+    
+    <script>
+    // Inline script to check authentication
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is authenticated
+        const token = localStorage.getItem('auth_token');
+        const userData = localStorage.getItem('user_data');
+        
+        if (!token) {
+            console.error('No authentication token found');
+            window.location.href = '/login?redirect=budgets&error=auth_required';
+            return;
+        }
+        
+        // Populate user name if available
+        if (userData) {
+            try {
+                const user = JSON.parse(userData);
+                const userNameEl = document.getElementById('user-name');
+                if (userNameEl) {
+                    userNameEl.textContent = user.username;
+                }
+            } catch (e) {
+                console.error('Failed to parse user data:', e);
+            }
+        }
+    });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,378 @@
+/* Reports.css - Styles for the Reports page */
+
+/* Main container */
+.reports-container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Reports Content */
+#reports-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #fcfcfc;
+}
+
+.card-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+.card-content {
+    padding: 16px;
+    min-height: 50px;
+}
+
+/* Report Configuration Section */
+.reports-config .card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.reports-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+}
+
+.date-range-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-range-selector span {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Financial Summary Section */
+.financial-summary {
+    margin-top: 0;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 16px;
+}
+
+.summary-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.summary-card h3 {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.positive {
+    color: #28a745;
+}
+
+.negative {
+    color: #dc3545;
+}
+
+/* Report Visualization */
+.report-visualization {
+    margin-bottom: 0;
+}
+
+.report-visualization .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.visualization-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chart-container {
+    height: 350px;
+    position: relative;
+    padding: 16px;
+}
+
+/* Report Details */
+.report-details {
+    margin-bottom: 0;
+}
+
+.details-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 10px;
+}
+
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.details-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.details-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.details-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.details-table .positive {
+    color: #28a745;
+}
+
+.details-table .negative {
+    color: #dc3545;
+}
+
+/* Form Controls */
+.form-control {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 0.95rem;
+    color: #495057;
+    min-width: 120px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+select.form-control {
+    padding-right: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23495057'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+.btn-secondary:hover {
+    background-color: #e9ecef;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-indicator p {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Error/Success Container */
+.error-container, .success-container {
+    position: relative;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    display: none;
+}
+
+.error-container {
+    background-color: #ffecef;
+    border-left: 4px solid #dc3545;
+    color: #dc3545;
+}
+
+.success-container {
+    background-color: #e8f8ee;
+    border-left: 4px solid #28a745;
+    color: #28a745;
+}
+
+.error-message, .success-message {
+    font-weight: 500;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .reports-config .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .reports-actions {
+        width: 100%;
+    }
+    
+    .card-header {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .reports-container {
+        padding: 0 10px;
+    }
+    
+    .reports-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    
+    .date-range-selector {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .date-range-selector input {
+        flex: 1;
+    }
+    
+    .summary-cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .report-visualization .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+} 

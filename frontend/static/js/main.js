@@ -1,3 +1,144 @@
+// Main.js - Global application functionality
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Main script loaded');
+    
+    // Handle navigation links
+    setupNavigation();
+    
+    // Set up user menu dropdown toggle
+    setupUserMenu();
+    
+    // Handle page-specific initialization based on URL
+    initializePageByUrl();
+});
+
+// Set up navigation link handling
+function setupNavigation() {
+    console.log('Setting up navigation');
+    
+    // Get all navigation links
+    const navLinks = document.querySelectorAll('.main-nav a');
+    
+    // Add click handler to each link
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // If the link has data-force-reload attribute or Ctrl/Cmd key is pressed, let the browser handle it
+            if (this.getAttribute('data-force-reload') === 'true' || e.ctrlKey || e.metaKey) {
+                console.log('Allowing browser to handle navigation to:', this.href);
+                return; // Let the browser handle the navigation
+            }
+            
+            // Otherwise, prevent default and handle navigation manually
+            e.preventDefault();
+            
+            const targetUrl = this.getAttribute('href');
+            console.log('Handling navigation to:', targetUrl);
+            
+            // Update active link
+            navLinks.forEach(navLink => {
+                navLink.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // For now, just redirect to force a page reload
+            window.location.href = targetUrl;
+        });
+    });
+}
+
+// Set up user menu dropdown
+function setupUserMenu() {
+    const userMenu = document.querySelector('.user-menu');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    
+    if (userMenu && dropdownMenu) {
+        // Toggle dropdown on click
+        userMenu.addEventListener('click', function(e) {
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            e.stopPropagation();
+        });
+        
+        // Close dropdown when clicking elsewhere
+        document.addEventListener('click', function() {
+            dropdownMenu.style.display = 'none';
+        });
+        
+        // Prevent closing when clicking on dropdown menu items
+        dropdownMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+}
+
+// Initialize page based on URL
+function initializePageByUrl() {
+    const path = window.location.pathname;
+    console.log('Initializing page for path:', path);
+    
+    // Set active navigation link based on current path
+    const navLinks = document.querySelectorAll('.main-nav a');
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (path === linkPath || (linkPath !== '/' && path.startsWith(linkPath))) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
+// Global utility functions
+function getAuthToken() {
+    return localStorage.getItem('auth_token');
+}
+
+function isAuthenticated() {
+    return !!getAuthToken();
+}
+
+function logout() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
+    window.location.href = '/login';
+}
+
+// Helper function to determine if running in development mode
+// For our budget tracker app, we'll use mock data when API requests fail
+function isDevelopment() {
+    // Check if we're running on localhost or 127.0.0.1
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+}
+
+// Add global event listener for logout button
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+    }
+});
+
+// Format currency values
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
+}
+
+// Format dates
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
 // DOM Elements
 document.addEventListener('DOMContentLoaded', function() {
     // Sample data - in a real app, this would come from your API
@@ -14,18 +155,22 @@ document.addEventListener('DOMContentLoaded', function() {
         ]
     };
     
-    // Render summary cards
-    renderSummaryCards(sampleData);
-    
-    // Render transactions
-    renderTransactions(sampleData.transactions);
-    
-    // Initialize charts (placeholder for now)
-    initCharts();
+    // Only run these functions on the main dashboard
+    if (document.getElementById('summary-cards')) {
+        // Render summary cards
+        renderSummaryCards(sampleData);
+        
+        // Render transactions
+        renderTransactions(sampleData.transactions);
+        
+        // Initialize charts (placeholder for now)
+        initCharts();
+    }
 });
 
 function renderSummaryCards(data) {
     const summaryContainer = document.getElementById('summary-cards');
+    if (!summaryContainer) return;
     
     // Clear current content
     summaryContainer.innerHTML = '';
@@ -68,6 +213,7 @@ function renderSummaryCards(data) {
 
 function renderTransactions(transactions) {
     const transactionsContainer = document.getElementById('transactions-list');
+    if (!transactionsContainer) return;
     
     // Clear current content
     transactionsContainer.innerHTML = '';
@@ -110,75 +256,39 @@ function renderTransactions(transactions) {
     });
     
     transactionsContainer.appendChild(table);
-    
-    // Add some styling to the table
-    const style = document.createElement('style');
-    style.textContent = `
-        .transactions-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .transactions-table th, .transactions-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #eaeaea;
-        }
-        .transactions-table th {
-            background-color: #f5f7fa;
-            font-weight: 600;
-        }
-        .income .amount {
-            color: #2ecc71;
-        }
-        .expense .amount {
-            color: #e74c3c;
-        }
-    `;
-    document.head.appendChild(style);
 }
 
 function initCharts() {
-    const chartContainer = document.getElementById('chart-container');
+    const chartContainer = document.getElementById('expense-chart');
+    if (!chartContainer) return;
     
-    chartContainer.innerHTML = `
-        <p>Charts will be implemented using a JavaScript library like Chart.js or D3.js.</p>
-        <div class="chart-placeholder"></div>
-    `;
+    // Sample data for chart
+    const data = {
+        labels: ['Housing', 'Food', 'Transportation', 'Utilities', 'Entertainment', 'Other'],
+        datasets: [{
+            label: 'Expenses by Category',
+            data: [500, 350, 200, 180, 120, 150],
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF',
+                '#FF9F40'
+            ]
+        }]
+    };
     
-    // Add some styling to the placeholder
-    const style = document.createElement('style');
-    style.textContent = `
-        .chart-placeholder {
-            height: 300px;
-            background-color: #f5f7fa;
-            border: 2px dashed #ccd6e0;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1rem;
+    // Create chart
+    new Chart(chartContainer, {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                position: 'right'
+            }
         }
-        .chart-placeholder:after {
-            content: 'Spending visualization will appear here';
-            color: #7f8c8d;
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Utility functions
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(amount);
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
     });
 }

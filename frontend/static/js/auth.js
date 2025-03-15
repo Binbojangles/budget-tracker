@@ -43,45 +43,99 @@ function initAuth() {
     }
 }
 
-// Validate authentication token
+// Update UI based on authentication state
+function updateAuthUI(isAuthenticated, userData) {
+    // Update user profile info if authenticated
+    if (isAuthenticated && userData) {
+        const userDisplayElements = document.querySelectorAll('.user-display-name');
+        userDisplayElements.forEach(el => {
+            el.textContent = userData.first_name ? `${userData.first_name} ${userData.last_name || ''}` : userData.username;
+        });
+    }
+    
+    // Show/hide auth-dependent elements
+    document.querySelectorAll('.auth-required').forEach(el => {
+        el.style.display = isAuthenticated ? 'block' : 'none';
+    });
+    
+    document.querySelectorAll('.non-auth-required').forEach(el => {
+        el.style.display = isAuthenticated ? 'none' : 'block';
+    });
+}
+
+// Initialize auth forms
+function initAuthForms() {
+    // Login form
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    // Register form
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
+}
+
+// Handle login form submission
 async function handleLogin(event) {
     event.preventDefault();
+    
+    console.log('Login form submitted - preventDefault called');
     
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const errorMsg = document.getElementById('login-error');
     
-    // Extensive logging
-    console.log('Login attempt started');
-    console.log('Username:', usernameInput ? usernameInput.value : 'Input not found');
-    console.log('Password:', passwordInput ? '***' : 'Input not found');
+    console.log('Form elements:', {
+        usernameInput: usernameInput ? 'Found' : 'Not Found',
+        passwordInput: passwordInput ? 'Found' : 'Not Found',
+        errorMsg: errorMsg ? 'Found' : 'Not Found'
+    });
+    
+    // Clear previous error
+    if (errorMsg) errorMsg.textContent = '';
     
     // Validate input
     if (!usernameInput || !passwordInput) {
-        console.error('Login form inputs not found');
-        if (errorMsg) errorMsg.textContent = 'Login form error';
+        console.error('Form inputs not found');
+        if (errorMsg) errorMsg.textContent = 'Form error: Inputs not found';
         return;
     }
     
     if (!usernameInput.value || !passwordInput.value) {
-        console.warn('Username or password is empty');
+        console.log('Missing username or password');
         if (errorMsg) errorMsg.textContent = 'Username and password are required';
         return;
     }
     
     // Show loading state
-    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const submitBtn = document.querySelector('#login-form button[type="submit"]');
+    console.log('Submit button:', submitBtn ? 'Found' : 'Not Found');
+    
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Logging in...';
     }
     
     try {
-        console.log('Sending login request...');
-        const response = await fetch('/api/auth/login', {
+        // Send login request
+        console.log('Sending login request to /api/auth/login');
+        console.log('Request payload:', {
+            username: usernameInput.value,
+            password: '********' // Don't log actual password
+        });
+        
+        // Debug the fetch call
+        const url = '/api/auth/login';
+        console.log('Request URL:', url);
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 username: usernameInput.value,
@@ -89,29 +143,45 @@ async function handleLogin(event) {
             })
         });
         
-        console.log('Response status:', response.status);
+        console.log('Login response status:', response.status);
+        console.log('Login response headers:', {
+            'content-type': response.headers.get('content-type')
+        });
         
-        const data = await response.json();
-        console.log('Response data:', data);
+        // Try to parse response
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+            console.log('Login response data:', data);
+        } else {
+            const text = await response.text();
+            console.warn('Non-JSON response:', text);
+            data = { error: 'Unexpected response format from server' };
+        }
         
         if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
+            throw new Error(data.error || `Login failed with status ${response.status}`);
         }
         
         // Store auth token and user data
+        console.log('Storing auth token and user data');
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user_data', JSON.stringify(data.user));
         
         // Update auth UI
+        console.log('Updating UI');
         updateAuthUI(true, data.user);
         
         // Redirect to dashboard
+        console.log('Redirecting to dashboard');
         window.location.href = '/dashboard';
         
     } catch (error) {
-        console.error('Complete login error:', error);
+        console.error('Complete login error details:', error);
         if (errorMsg) {
-            errorMsg.textContent = error.message || 'An unexpected error occurred';
+            errorMsg.textContent = error.message || 'Login failed. Please try again.';
+            errorMsg.style.display = 'block';
         }
     } finally {
         // Reset button state
@@ -137,108 +207,6 @@ function isProtectedPage() {
 function isAuthPage() {
     const path = window.location.pathname;
     return path.includes('/login.html') || path.includes('/register.html');
-}
-
-// Update UI based on authentication state
-function updateAuthUI(isAuthenticated, userData) {
-    // Update user name if available
-    const userNameElements = document.querySelectorAll('#user-name');
-    userNameElements.forEach(el => {
-        if (isAuthenticated && userData.username) {
-            el.textContent = userData.username;
-        } else {
-            el.textContent = 'Guest';
-        }
-    });
-    
-    // Show/hide auth-dependent elements
-    document.querySelectorAll('.auth-required').forEach(el => {
-        el.style.display = isAuthenticated ? 'block' : 'none';
-    });
-    
-    document.querySelectorAll('.no-auth-required').forEach(el => {
-        el.style.display = isAuthenticated ? 'none' : 'block';
-    });
-}
-
-// Initialize auth forms
-function initAuthForms() {
-    // Login form
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    
-    // Register form
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', handleRegister);
-    }
-}
-
-// Handle login form submission
-async function handleLogin(event) {
-    event.preventDefault();
-    
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const errorMsg = document.getElementById('login-error');
-    
-    // Clear previous error
-    if (errorMsg) errorMsg.textContent = '';
-    
-    // Validate input
-    if (!usernameInput.value || !passwordInput.value) {
-        if (errorMsg) errorMsg.textContent = 'Username and password are required';
-        return;
-    }
-    
-    // Show loading state
-    const submitBtn = document.querySelector('#login-form button[type="submit"]');
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Logging in...';
-    }
-    
-    try {
-        // Send login request
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: usernameInput.value,
-                password: passwordInput.value
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
-        }
-        
-        // Store auth token and user data
-        localStorage.setItem('auth_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
-        
-        // Update auth UI
-        updateAuthUI(true, data.user);
-        
-        // Redirect to dashboard
-        window.location.href = '/dashboard.html';
-        
-    } catch (error) {
-        if (errorMsg) errorMsg.textContent = error.message;
-        console.error('Login error:', error);
-    } finally {
-        // Reset button state
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Login';
-        }
-    }
 }
 
 // Handle register form submission
@@ -420,5 +388,23 @@ async function changePassword(currentPassword, newPassword, confirmNewPassword) 
     } catch (error) {
         console.error('Password change error:', error);
         throw error;
+    }
+}
+
+// Validate authentication token
+async function validateAuthToken(token) {
+    try {
+        const response = await fetch('/api/auth/profile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        return response.ok;
+    } catch (error) {
+        console.error('Token validation error:', error);
+        return false;
     }
 }

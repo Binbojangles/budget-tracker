@@ -12,9 +12,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Make scripts executable
-RUN chmod +x start.sh
-RUN chmod +x wait-for-db.sh
-
-# Run the application with wait script
-CMD ["./wait-for-db.sh", "db", "./start.sh"]
+# Set entrypoint directly with Python commands
+CMD ["bash", "-c", "python init_db.py && gunicorn --bind 0.0.0.0:8000 --reload backend.app:app"]
