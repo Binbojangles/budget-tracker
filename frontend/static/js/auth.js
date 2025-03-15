@@ -44,20 +44,38 @@ function initAuth() {
 }
 
 // Validate authentication token
-async function validateAuthToken(token) {
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    // Add more detailed logging
+    console.log('Login attempt started');
+    
     try {
-        const response = await fetch('/api/auth/profile', {
-            method: 'GET',
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                username: usernameInput.value,
+                password: passwordInput.value
+            })
         });
         
-        return response.ok;
+        // Log the raw response
+        console.log('Response status:', response.status);
+        
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Login failed');
+        }
+        
+        // Rest of login logic...
     } catch (error) {
-        console.error('Token validation error:', error);
-        return false;
+        console.error('Complete login error:', error);
+        if (errorMsg) errorMsg.textContent = error.message;
     }
 }
 

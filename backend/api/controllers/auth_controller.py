@@ -112,17 +112,31 @@ def register_user():
 def login_user():
     """Authenticate a user and return a token."""
     try:
+        # Log the incoming request data
+        print("Login request received:")
+        print("Request JSON:", request.get_json())
+        
         data = request.get_json()
         
-        # Validate required fields
-        if not data.get('username') or not data.get('password'):
-            return jsonify({"error": "Username and password are required"}), 400
+        # More detailed validation logging
+        if not data.get('username'):
+            print("Missing username")
+            return jsonify({"error": "Username is required"}), 400
+        
+        if not data.get('password'):
+            print("Missing password")
+            return jsonify({"error": "Password is required"}), 400
         
         # Find the user by username
         user = User.query.filter_by(username=data['username']).first()
         
-        # Check if user exists and password is correct
-        if not user or not user.check_password(data['password']):
+        # Detailed authentication logging
+        if not user:
+            print(f"User not found: {data['username']}")
+            return jsonify({"error": "Invalid credentials"}), 401
+        
+        if not user.check_password(data['password']):
+            print(f"Invalid password for user: {data['username']}")
             return jsonify({"error": "Invalid credentials"}), 401
         
         # Generate token
@@ -141,6 +155,8 @@ def login_user():
         }), 200
         
     except Exception as e:
+        # Catch-all error logging
+        print(f"Unexpected login error: {str(e)}")
         return jsonify({"error": "Server error", "details": str(e)}), 500
 
 def generate_auth_token(user_id):
