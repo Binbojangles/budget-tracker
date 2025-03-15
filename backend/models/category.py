@@ -40,6 +40,8 @@ class Category(db.Model):
     @classmethod
     def create_default_categories(cls, user_id):
         """Create default expense and income categories for a new user."""
+        print(f"Creating default categories for user_id: {user_id}")
+        
         default_categories = [
             # Income categories
             {'name': 'Salary', 'type': 'income', 'color': '#2ecc71', 'icon': 'briefcase'},
@@ -63,9 +65,10 @@ class Category(db.Model):
         
         categories = []
         for cat in default_categories:
+            print(f"Creating category {cat['name']} with user_id {user_id}")
             category = cls(
                 name=cat['name'],
-                user_id=user_id,
+                user_id=user_id,  # Ensure this is set correctly
                 category_type=cat['type'],
                 color=cat['color'],
                 icon=cat['icon'],

@@ -21,11 +21,11 @@ class Account(db.Model):
     
     # Relationships
     transactions = db.relationship(
-    'Transaction', 
-    foreign_keys="Transaction.account_id",
-    backref='account', 
-    lazy=True, 
-    cascade="all, delete-orphan"   
+        'Transaction', 
+        foreign_keys="Transaction.account_id",
+        backref='account', 
+        lazy=True, 
+        cascade="all, delete-orphan"
     )
     
     def __init__(self, name, account_type, user_id, balance=0.0, currency='USD'):

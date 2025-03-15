@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Wait for PostgreSQL to start
+echo "Waiting for database..."
+sleep 5
+
 # Initialize the database
 python init_db.py
 
