@@ -19,17 +19,45 @@ function initAuth() {
     const token = localStorage.getItem('auth_token');
     const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
     
-    // Update UI based on auth state
-    updateAuthUI(!!token, userData);
+    // Validate token if exists
+    if (token) {
+        validateAuthToken(token)
+            .then(isValid => {
+                updateAuthUI(isValid, userData);
+                if (!isValid) {
+                    handleLogout();
+                }
+            })
+            .catch(() => handleLogout());
+    } else {
+        updateAuthUI(false, {});
+    }
     
-    // If no token but on protected page, redirect to login
+    // Redirect management
     if (!token && isProtectedPage()) {
         window.location.href = '/login.html';
     }
     
-    // If has token but on auth page, redirect to dashboard
     if (token && isAuthPage()) {
         window.location.href = '/dashboard.html';
+    }
+}
+
+// Validate authentication token
+async function validateAuthToken(token) {
+    try {
+        const response = await fetch('/api/auth/profile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        return response.ok;
+    } catch (error) {
+        console.error('Token validation error:', error);
+        return false;
     }
 }
 
@@ -53,10 +81,14 @@ function isAuthPage() {
 // Update UI based on authentication state
 function updateAuthUI(isAuthenticated, userData) {
     // Update user name if available
-    const userNameElement = document.getElementById('user-name');
-    if (userNameElement && userData.username) {
-        userNameElement.textContent = userData.username;
-    }
+    const userNameElements = document.querySelectorAll('#user-name');
+    userNameElements.forEach(el => {
+        if (isAuthenticated && userData.username) {
+            el.textContent = userData.username;
+        } else {
+            el.textContent = 'Guest';
+        }
+    });
     
     // Show/hide auth-dependent elements
     document.querySelectorAll('.auth-required').forEach(el => {
@@ -130,6 +162,9 @@ async function handleLogin(event) {
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user_data', JSON.stringify(data.user));
         
+        // Update auth UI
+        updateAuthUI(true, data.user);
+        
         // Redirect to dashboard
         window.location.href = '/dashboard.html';
         
@@ -152,7 +187,10 @@ async function handleRegister(event) {
     const usernameInput = document.getElementById('username');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirm-password');
+    const confirmPasswordInput = document.getElementById('confirm-confirm-password');
+    const firstNameInput = document.getElementById('first-name');
+    const lastNameInput = document.getElementById('last-name');
+    const termsCheckbox = document.getElementById('terms');
     const errorMsg = document.getElementById('register-error');
     
     // Clear previous error
@@ -166,6 +204,11 @@ async function handleRegister(event) {
     
     if (passwordInput.value !== confirmPasswordInput.value) {
         if (errorMsg) errorMsg.textContent = 'Passwords do not match';
+        return;
+    }
+    
+    if (!termsCheckbox.checked) {
+        if (errorMsg) errorMsg.textContent = 'You must agree to the Terms of Service and Privacy Policy';
         return;
     }
     
@@ -187,8 +230,8 @@ async function handleRegister(event) {
                 username: usernameInput.value,
                 email: emailInput.value,
                 password: passwordInput.value,
-                first_name: document.getElementById('first-name')?.value || '',
-                last_name: document.getElementById('last-name')?.value || ''
+                first_name: firstNameInput?.value || '',
+                last_name: lastNameInput?.value || ''
             })
         });
         
@@ -201,6 +244,9 @@ async function handleRegister(event) {
         // Store auth token and user data
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user_data', JSON.stringify(data.user));
+        
+        // Update auth UI
+        updateAuthUI(true, data.user);
         
         // Redirect to dashboard
         window.location.href = '/dashboard.html';
@@ -223,6 +269,9 @@ function handleLogout() {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_data');
     
+    // Update UI to logged out state
+    updateAuthUI(false, {});
+    
     // Redirect to login page
     window.location.href = '/login.html';
 }
@@ -234,4 +283,81 @@ function getAuthHeaders() {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
+}
+
+// Fetch user profile
+async function fetchUserProfile() {
+    try {
+        const response = await fetch('/api/auth/profile', {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch profile');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Profile fetch error:', error);
+        handleLogout(); // Logout if profile fetch fails
+        return null;
+    }
+}
+
+// Update user profile
+async function updateUserProfile(profileData) {
+    try {
+        const response = await fetch('/api/auth/profile', {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(profileData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update profile');
+        }
+        
+        const updatedUser = await response.json();
+        
+        // Update local storage
+        const currentUserData = JSON.parse(localStorage.getItem('user_data') || '{}');
+        localStorage.setItem('user_data', JSON.stringify({
+            ...currentUserData,
+            ...updatedUser
+        }));
+        
+        return updatedUser;
+    } catch (error) {
+        console.error('Profile update error:', error);
+        throw error;
+    }
+}
+
+// Password change function
+async function changePassword(currentPassword, newPassword, confirmNewPassword) {
+    if (newPassword !== confirmNewPassword) {
+        throw new Error('New passwords do not match');
+    }
+    
+    try {
+        const response = await fetch('/api/auth/change-password', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+                current_password: currentPassword,
+                new_password: newPassword
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to change password');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Password change error:', error);
+        throw error;
+    }
 }
