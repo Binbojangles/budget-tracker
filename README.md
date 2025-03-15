@@ -12,11 +12,25 @@ A full-stack web application for tracking personal finances, analyzing spending 
 - **Smart Recommendations**: Receive personalized recommendations for reducing expenses and optimizing your budget
 - **Reporting**: Generate comprehensive financial reports
 
+## Project Status
+
+This project is currently in active development. The current status is:
+
+- ✅ Project structure and architecture set up
+- ✅ Backend API endpoints implemented
+- ✅ Frontend UI designed and implemented
+- ✅ Database models and relationships defined
+- ✅ Docker containerization configured
+- 🔄 Frontend-Backend integration in progress
+- 🔄 Authentication flow implementation in progress
+- 🔄 Data visualization implementation in progress
+- 🔄 Statement parsing and import functionality in progress
+
 ## Technology Stack
 
 - **Backend**: Python with Flask/SQLAlchemy
-- **Database**: SQLite (development), PostgreSQL (production)
-- **Frontend**: HTML, CSS, JavaScript
+- **Database**: PostgreSQL (production), SQLite (development)
+- **Frontend**: HTML, CSS, JavaScript with Chart.js for visualization
 - **Containerization**: Docker and Docker Compose
 - **Version Control**: Git/GitHub
 
@@ -73,7 +87,7 @@ flask db upgrade
 flask run
 ```
 
-### Docker Setup
+### Docker Setup (Recommended)
 
 1. Build and start the containers:
 ```bash
@@ -81,6 +95,31 @@ docker-compose up -d
 ```
 
 2. The application will be available at http://localhost:8000
+
+3. To stop the containers:
+```bash
+docker-compose down
+```
+
+## Development Roadmap
+
+Here are the next steps in our development process:
+
+1. **Authentication Integration**: Connect the frontend login/registration with backend authentication
+2. **Account Management**: Implement account creation and management functionality
+3. **Transaction Tracking**: Enable transaction entry, editing, and viewing
+4. **Statement Import**: Complete CSV/Excel statement parsing and import
+5. **Data Visualization**: Implement interactive charts and graphs
+6. **Budget Management**: Enable budget creation and tracking
+7. **Recommendations Engine**: Activate the smart recommendations system
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
 
 ## API Documentation
 
@@ -118,50 +157,16 @@ The application provides a RESTful API with the following endpoints:
 - `GET /api/analysis/recommendations/budget-plan` - Get recommended budget plan
 - `GET /api/analysis/recommendations/cost-cutting` - Get cost-cutting opportunities
 
-## Project Structure
+## Troubleshooting
 
-```
-budget-tracker/
-│
-├── backend/                # Backend Python code
-│   ├── api/                # API endpoints and controllers
-│   │   ├── controllers/    # Business logic for API routes
-│   │   └── routes/         # API route definitions
-│   ├── models/             # Database models
-│   ├── services/           # Business logic services
-│   │   ├── analyzers/      # Analysis tools
-│   │   ├── parsers/        # File parsers
-│   │   └── recommendations/ # Recommendation engines
-│   └── utils/              # Utility functions
-│
-├── frontend/              # Frontend code
-│   ├── static/            # Static assets
-│   │   ├── css/           # CSS stylesheets
-│   │   ├── js/            # JavaScript files
-│   │   └── images/        # Image assets
-│   └── templates/         # HTML templates
-│
-├── database/              # Database migrations and seeds
-│
-├── docs/                  # Documentation
-│
-├── deployment/            # Deployment configurations
-│
-├── .env.example          # Example environment variables
-├── .gitignore            # Git ignore file
-├── docker-compose.yml    # Docker Compose configuration
-├── Dockerfile            # Docker configuration
-├── requirements.txt      # Python dependencies
-└── README.md             # This file
-```
+If you encounter any issues while setting up or running the application, please check the following:
 
-## Contributing
+1. Ensure all dependencies are installed correctly
+2. Verify database connection settings in the .env file
+3. Check the application logs for detailed error messages
+4. Make sure the required ports (8000, 5432) are available and not used by other applications
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add some feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
+For more detailed troubleshooting, check the error messages in the console or the application logs.
 
 ## License
 
