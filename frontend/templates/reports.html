@@ -1,0 +1,412 @@
+<div class="reports-container">
+    <!-- Error Handling Container -->
+    <div id="reports-error-container" class="error-container" style="display: none;">
+        <div class="error-message"></div>
+    </div>
+
+    <!-- Loader -->
+    <div id="reports-loader" class="loading-indicator" style="display: flex;">
+        <div class="spinner"></div>
+        <p>Generating financial reports...</p>
+    </div>
+
+    <!-- Main Reports Content (Initially Hidden) -->
+    <div id="reports-content" style="display: none;">
+        <!-- Report Configuration Section -->
+        <section class="reports-config dashboard-card">
+            <div class="card-header">
+                <h2>Financial Reports</h2>
+                <div class="reports-actions">
+                    <select id="report-type-select" class="form-control">
+                        <option value="spending">Spending Analysis</option>
+                        <option value="income">Income Report</option>
+                        <option value="cashflow">Cash Flow</option>
+                        <option value="category-breakdown">Category Breakdown</option>
+                        <option value="investment">Investment Performance</option>
+                    </select>
+                    <div class="date-range-selector">
+                        <input type="date" id="report-start-date" class="form-control">
+                        <span>to</span>
+                        <input type="date" id="report-end-date" class="form-control">
+                    </div>
+                    <button id="generate-report-btn" class="btn btn-primary">
+                        <i class="fas fa-chart-bar"></i> Generate Report
+                    </button>
+                    <button id="export-report-btn" class="btn btn-secondary">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Financial Summary -->
+        <section class="financial-summary dashboard-card">
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Income</h3>
+                    <p id="total-income" class="card-value positive">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Expenses</h3>
+                    <p id="total-expenses" class="card-value negative">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Net Cash Flow</h3>
+                    <p id="net-cashflow" class="card-value">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Average Monthly Spending</h3>
+                    <p id="avg-monthly-spending" class="card-value">$0.00</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Report Visualization Sections -->
+        <section id="spending-analysis-section" class="report-section dashboard-card" style="display: none;">
+            <div class="card-header">
+                <h2>Spending Analysis</h2>
+            </div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <canvas id="spending-analysis-chart"></canvas>
+                </div>
+                <div id="spending-analysis-details" class="report-details">
+                    <!-- Dynamically populated spending details -->
+                </div>
+            </div>
+        </section>
+
+        <section id="income-report-section" class="report-section dashboard-card" style="display: none;">
+            <div class="card-header">
+                <h2>Income Report</h2>
+            </div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <canvas id="income-report-chart"></canvas>
+                </div>
+                <div id="income-report-details" class="report-details">
+                    <!-- Dynamically populated income details -->
+                </div>
+            </div>
+        </section>
+
+        <section id="cashflow-section" class="report-section dashboard-card" style="display: none;">
+            <div class="card-header">
+                <h2>Cash Flow Analysis</h2>
+            </div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <canvas id="cashflow-chart"></canvas>
+                </div>
+                <div id="cashflow-details" class="report-details">
+                    <!-- Dynamically populated cashflow details -->
+                </div>
+            </div>
+        </section>
+
+        <section id="category-breakdown-section" class="report-section dashboard-card" style="display: none;">
+            <div class="card-header">
+                <h2>Spending by Category</h2>
+            </div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <canvas id="category-breakdown-chart"></canvas>
+                </div>
+                <div id="category-breakdown-details" class="report-details">
+                    <!-- Dynamically populated category breakdown details -->
+                </div>
+            </div>
+        </section>
+
+        <section id="investment-performance-section" class="report-section dashboard-card" style="display: none;">
+            <div class="card-header">
+                <h2>Investment Performance</h2>
+            </div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <canvas id="investment-performance-chart"></canvas>
+                </div>
+                <div id="investment-performance-details" class="report-details">
+                    <!-- Dynamically populated investment performance details -->
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+.reports-config {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.reports-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.date-range-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.report-section {
+    margin-top: 1rem;
+}
+
+.report-details {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.chart-container {
+    height: 400px;
+    position: relative;
+}
+
+.export-options {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loaderElement = document.getElementById('reports-loader');
+    const contentElement = document.getElementById('reports-content');
+    const errorContainer = document.getElementById('reports-error-container');
+    const errorMessage = errorContainer.querySelector('.error-message');
+
+    // Report Configuration Elements
+    const reportTypeSelect = document.getElementById('report-type-select');
+    const startDateInput = document.getElementById('report-start-date');
+    const endDateInput = document.getElementById('report-end-date');
+    const generateReportBtn = document.getElementById('generate-report-btn');
+    const exportReportBtn = document.getElementById('export-report-btn');
+
+    // Report Sections
+    const reportSections = {
+        spending: document.getElementById('spending-analysis-section'),
+        income: document.getElementById('income-report-section'),
+        cashflow: document.getElementById('cashflow-section'),
+        'category-breakdown': document.getElementById('category-breakdown-section'),
+        investment: document.getElementById('investment-performance-section')
+    };
+
+    // Error handling
+    function showError(message) {
+        loaderElement.style.display = 'none';
+        contentElement.style.display = 'none';
+        errorMessage.textContent = message;
+        errorContainer.style.display = 'block';
+    }
+
+    // Set default date range (last 3 months)
+    function setDefaultDateRange() {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(endDate.getMonth() - 3);
+
+        startDateInput.value = startDate.toISOString().split('T')[0];
+        endDateInput.value = endDate.toISOString().split('T')[0];
+    }
+
+    // Initialize page
+    function initializePage() {
+        // Set default date range
+        setDefaultDateRange();
+
+        // Hide all report sections
+        Object.values(reportSections).forEach(section => {
+            section.style.display = 'none';
+        });
+
+        // Hide loader, show content
+        loaderElement.style.display = 'none';
+        contentElement.style.display = 'block';
+    }
+
+    // Fetch and generate report
+    async function generateReport() {
+        // Show loader
+        loaderElement.style.display = 'flex';
+        contentElement.style.display = 'none';
+
+        try {
+            const reportType = reportTypeSelect.value;
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            // Hide all sections first
+            Object.values(reportSections).forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Fetch report data based on selected type
+            const reportData = await fetchReportData(reportType, startDate, endDate);
+
+            // Update financial summary
+            updateFinancialSummary(reportData.summary);
+
+            // Render specific report
+            switch(reportType) {
+                case 'spending':
+                    renderSpendingAnalysisReport(reportData);
+                    break;
+                case 'income':
+                    renderIncomeReport(reportData);
+                    break;
+                case 'cashflow':
+                    renderCashFlowReport(reportData);
+                    break;
+                case 'category-breakdown':
+                    renderCategoryBreakdownReport(reportData);
+                    break;
+                case 'investment':
+                    renderInvestmentPerformanceReport(reportData);
+                    break;
+            }
+
+            // Show loader, then content
+            loaderElement.style.display = 'none';
+            contentElement.style.display = 'block';
+            reportSections[reportType].style.display = 'block';
+        } catch (error) {
+            console.error('Report generation error:', error);
+            showError('Failed to generate report. Please try again.');
+        }
+    }
+
+    // Fetch report data from API
+    async function fetchReportData(reportType, startDate, endDate) {
+        const params = new URLSearchParams({
+            report_type: reportType,
+            start_date: startDate,
+            end_date: endDate
+        });
+
+        const response = await fetch(`/api/reports?${params}`, {
+            headers: getAuthHeaders()
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch report data');
+        return await response.json();
+    }
+
+    // Update Financial Summary
+    function updateFinancialSummary(summaryData) {
+        document.getElementById('total-income').textContent = formatCurrency(summaryData.total_income);
+        document.getElementById('total-expenses').textContent = formatCurrency(summaryData.total_expenses);
+        document.getElementById('net-cashflow').textContent = formatCurrency(summaryData.net_cashflow);
+        document.getElementById('avg-monthly-spending').textContent = formatCurrency(summaryData.avg_monthly_spending);
+    }
+
+    // Render Reports (each will have similar but specific implementation)
+    function renderSpendingAnalysisReport(reportData) {
+        const ctx = document.getElementById('spending-analysis-chart').getContext('2d');
+        const detailsContainer = document.getElementById('spending-analysis-details');
+
+        // Create line chart of spending over time
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: reportData.labels,
+                datasets: [{
+                    label: 'Monthly Spending',
+                    data: reportData.spending_data,
+                    borderColor: '#36A2EB',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                title: { display: true, text: 'Monthly Spending Analysis' },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Populate details
+        detailsContainer.innerHTML = `
+            <h3>Spending Analysis Insights</h3>
+            <p>Highest spending month: ${reportData.highest_spending_month}</p>
+            <p>Lowest spending month: ${reportData.lowest_spending_month}</p>
+            <p>Average monthly spending: ${formatCurrency(reportData.avg_monthly_spending)}</p>
+        `;
+    }
+
+    // Similar rendering functions for other report types...
+    function renderIncomeReport(reportData) {
+        // Implementation similar to spending analysis
+        const ctx = document.getElementById('income-report-chart').getContext('2d');
+        const detailsContainer = document.getElementById('income-report-details');
+
+        // Chart and details population logic
+    }
+
+    function renderCashFlowReport(reportData) {
+        // Cash flow chart and details
+        const ctx = document.getElementById('cashflow-chart').getContext('2d');
+        const detailsContainer = document.getElementById('cashflow-details');
+
+        // Chart and details population logic
+    }
+
+    function renderCategoryBreakdownReport(reportData) {
+        // Category breakdown pie chart
+        const ctx = document.getElementById('category-breakdown-chart').getContext('2d');
+        const detailsContainer = document.getElementById('category-breakdown-details');
+
+        // Chart and details population logic
+    }
+
+    function renderInvestmentPerformanceReport(reportData) {
+        // Investment performance chart
+        const ctx = document.getElementById('investment-performance-chart').getContext('2d');
+        const detailsContainer = document.getElementById('investment-performance-details');
+
+        // Chart and details population logic
+    }
+
+    // Export Report
+    function exportReport() {
+        const reportType = reportTypeSelect.value;
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        // Open export options modal or trigger export directly
+        window.open(`/api/reports/export?report_type=${reportType}&start_date=${startDate}&end_date=${endDate}`, '_blank');
+    }
+
+    // Event Listeners
+    generateReportBtn.addEventListener('click', generateReport);
+    exportReportBtn.addEventListener('click', exportReport);
+
+    // Utility Functions
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(amount);
+    }
+
+    // Initial page setup
+    initializePage();
+});
+</script>

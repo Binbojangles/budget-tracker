@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -14,7 +14,15 @@ load_dotenv()
 
 def create_app(config=None):
     """Create and configure the Flask app."""
-    app = Flask(__name__, static_folder='../frontend/static', template_folder='../frontend/templates')
+    # Determine the base directory
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    frontend_dir = os.path.join(base_dir, 'frontend')
+    static_dir = os.path.join(frontend_dir, 'static')
+    templates_dir = os.path.join(frontend_dir, 'templates')
+
+    app = Flask(__name__, 
+                static_folder=static_dir, 
+                template_folder=templates_dir)
     
     # Configure app
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///budget_tracker.db')
@@ -28,7 +36,7 @@ def create_app(config=None):
         app.config.update(config)
     
     # Enable CORS
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
     
     # Initialize extensions
     db.init_app(app)
@@ -45,16 +53,33 @@ def create_app(config=None):
     def health_check():
         return jsonify({"status": "healthy", "message": "Budget Tracker API is running"})
     
-    # Serve frontend
-    @app.route('/', defaults={'path': ''})
+    # Static file routes
+    @app.route('/static/<path:path>')
+    def send_static(path):
+        return send_from_directory(static_dir, path)
+    
+    # Frontend routes
+    frontend_routes = [
+        '/', 
+        '/login', 
+        '/register', 
+        '/dashboard', 
+        '/transactions', 
+        '/accounts', 
+        '/budgets', 
+        '/reports', 
+        '/settings'
+    ]
+    
+    for route in frontend_routes:
+        @app.route(route)
+        def serve_frontend(path=route):
+            return render_template('index.html')
+    
+    # Fallback route for any unmatched routes
     @app.route('/<path:path>')
-    def serve_frontend(path):
-        from flask import send_from_directory, render_template
-        
-        if path and os.path.exists(os.path.join(app.static_folder, path)):
-            return send_from_directory(app.static_folder, path)
-        
-        return render_template('index.html')
+    def catch_all(path):
+        return render_template('index.html'), 200
     
     # Create tables
     with app.app_context():
