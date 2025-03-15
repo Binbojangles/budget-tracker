@@ -1,173 +1,128 @@
-# Budget Tracker Application
+# Budget Tracker
 
-A full-stack web application for tracking personal finances, analyzing spending patterns, and receiving budget recommendations.
+A powerful personal finance application for tracking budgets, expenses, and gaining insights into your spending habits.
 
 ## Features
 
-- **Account Management**: Add and manage different financial accounts (checking, savings, credit cards)
-- **Transaction Tracking**: Record income, expenses, and transfers between accounts
-- **Statement Import**: Upload and parse bank statements in various formats (CSV, Excel, PDF)
-- **Spending Analysis**: Visualize spending patterns by category, time period, and merchant
-- **Budget Creation**: Create and track budgets with customizable categories
-- **Smart Recommendations**: Receive personalized recommendations for reducing expenses and optimizing your budget
-- **Reporting**: Generate comprehensive financial reports
+- **Budget Management**: Create and manage multiple budgets with customizable periods
+- **Category-Based Tracking**: Organize your finances with customizable categories
+- **Visual Reports**: Visualize your spending with interactive charts and graphs
+- **Spending Analysis**: Monitor budget progress and identify areas to save money
+- **Responsive Design**: Works on desktop and mobile devices
 
-## Project Status
-
-This project is currently in active development. The current status is:
-
-- ✅ Project structure and architecture set up
-- ✅ Backend API endpoints implemented
-- ✅ Frontend UI designed and implemented
-- ✅ Database models and relationships defined
-- ✅ Docker containerization configured
-- 🔄 Frontend-Backend integration in progress
-- 🔄 Authentication flow implementation in progress
-- 🔄 Data visualization implementation in progress
-- 🔄 Statement parsing and import functionality in progress
-
-## Technology Stack
-
-- **Backend**: Python with Flask/SQLAlchemy
-- **Database**: PostgreSQL (production), SQLite (development)
-- **Frontend**: HTML, CSS, JavaScript with Chart.js for visualization
-- **Containerization**: Docker and Docker Compose
-- **Version Control**: Git/GitHub
-
-## Installation and Setup
+## Getting Started
 
 ### Prerequisites
 
-- Python 3.8+
-- pip (Python package manager)
-- Docker and Docker Compose (optional, for containerized deployment)
-- Git
+- Web browser with JavaScript enabled
+- Local development server or web hosting
 
-### Local Development Setup
+### Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/your-username/budget-tracker.git
-cd budget-tracker
-```
+   ```
+   git clone https://github.com/yourusername/budget-tracker.git
+   cd budget-tracker
+   ```
 
-2. Create and activate a virtual environment:
-```bash
-# On Windows
-python -m venv venv
-.\venv\Scripts\activate
+2. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
 
-# On macOS/Linux
-python -m venv venv
-source venv/bin/activate
-```
+3. Start the application:
+   ```
+   python app.py
+   ```
 
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+4. Open your browser and navigate to:
+   ```
+   http://localhost:5000
+   ```
 
-4. Set up environment variables:
-```bash
-# Copy the example env file
-cp .env.example .env
+## Using the Budget Tracker
 
-# Edit the .env file with your settings
-```
+### Creating a Budget
 
-5. Initialize the database:
-```bash
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
-```
+1. Click the "Create New Budget" button
+2. Enter a name for your budget
+3. Set start and end dates
+4. Add categories with their allocated amounts
+5. Click "Save Budget"
 
-6. Run the application:
-```bash
-flask run
-```
+### Adding Categories
 
-### Docker Setup (Recommended)
+1. Open an existing budget
+2. Click "Add Category"
+3. Select a category from the dropdown
+4. Enter the budgeted amount
+5. Click "Add Category"
 
-1. Build and start the containers:
-```bash
-docker-compose up -d
-```
+### Tracking Expenses
 
-2. The application will be available at http://localhost:8000
+1. Navigate to the Expenses section
+2. Click "Add Expense"
+3. Enter the expense details (amount, category, date, etc.)
+4. Click "Save Expense"
 
-3. To stop the containers:
-```bash
-docker-compose down
-```
+### Viewing Reports
 
-## Development Roadmap
+1. Go to the Dashboard page
+2. View spending by category in the charts
+3. Toggle between monthly, quarterly, and yearly views
+4. Track your budget progress through the progress bars
 
-Here are the next steps in our development process:
+## Technology Stack
 
-1. **Authentication Integration**: Connect the frontend login/registration with backend authentication
-2. **Account Management**: Implement account creation and management functionality
-3. **Transaction Tracking**: Enable transaction entry, editing, and viewing
-4. **Statement Import**: Complete CSV/Excel statement parsing and import
-5. **Data Visualization**: Implement interactive charts and graphs
-6. **Budget Management**: Enable budget creation and tracking
-7. **Recommendations Engine**: Activate the smart recommendations system
+- **Frontend**: HTML, CSS, JavaScript, Chart.js
+- **Backend**: Python, Flask
+- **Database**: SQLite (development), PostgreSQL (production)
+- **UI Framework**: Custom CSS with responsive design principles
+
+## Project Structure
+
+- `/frontend`: Contains HTML, CSS, and JavaScript files
+  - `/static`: Static assets (JS, CSS, images)
+  - `/templates`: HTML templates
+- `/backend`: Server-side code
+  - `/models`: Database models
+  - `/routes`: API endpoints
+  - `/services`: Business logic
+- `/config`: Configuration files
+- `/utils`: Utility functions and helpers
+
+## Local Storage
+
+The application uses browser local storage to maintain:
+- Budget data
+- Category information
+- User preferences
+- Current session state
+
+This enables persistence between sessions without requiring login.
+
+## Known Issues & Future Improvements
+
+- **Data Export**: Planning to add CSV/PDF export functionality
+- **Dark Mode**: Coming in the next update
+- **Multi-currency Support**: Future enhancement for international users
+- **Budget Templates**: Save and reuse budget templates
+- **Transaction Import**: Import transactions from CSV or bank feeds
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add some feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## API Documentation
-
-The application provides a RESTful API with the following endpoints:
-
-### Authentication
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login and get authentication token
-- `GET /api/auth/profile` - Get user profile information
-
-### Accounts
-- `GET /api/accounts` - Get all user accounts
-- `GET /api/accounts/:id` - Get a specific account
-- `POST /api/accounts` - Create a new account
-- `PUT /api/accounts/:id` - Update an account
-- `DELETE /api/accounts/:id` - Delete an account
-
-### Transactions
-- `GET /api/transactions` - Get all transactions (with filtering options)
-- `GET /api/transactions/:id` - Get a specific transaction
-- `POST /api/transactions` - Create a new transaction
-- `PUT /api/transactions/:id` - Update a transaction
-- `DELETE /api/transactions/:id` - Delete a transaction
-
-### File Upload and Import
-- `POST /api/upload/statement` - Upload and parse a bank statement
-- `POST /api/upload/import` - Import parsed transactions into the database
-
-### Analysis and Recommendations
-- `GET /api/analysis/spending-by-category` - Get spending breakdown by category
-- `GET /api/analysis/monthly-trends` - Get monthly spending trends
-- `GET /api/analysis/largest-expenses` - Get largest individual expenses
-- `GET /api/analysis/budget-comparison/:id` - Compare actual spending with budget
-- `GET /api/analysis/recommendations/spending` - Get spending recommendations
-- `GET /api/analysis/recommendations/budget-plan` - Get recommended budget plan
-- `GET /api/analysis/recommendations/cost-cutting` - Get cost-cutting opportunities
-
-## Troubleshooting
-
-If you encounter any issues while setting up or running the application, please check the following:
-
-1. Ensure all dependencies are installed correctly
-2. Verify database connection settings in the .env file
-3. Check the application logs for detailed error messages
-4. Make sure the required ports (8000, 5432) are available and not used by other applications
-
-For more detailed troubleshooting, check the error messages in the console or the application logs.
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Chart.js for the visualization components
+- FontAwesome for the icons
+- All contributors who have helped improve this application
