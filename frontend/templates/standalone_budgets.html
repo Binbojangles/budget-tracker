@@ -70,71 +70,86 @@
                         </div>
                     </section>
 
-                    <!-- Current Budget Overview -->
-                    <section class="current-budget-overview dashboard-card">
-                        <div class="card-header">
-                            <h2>Current Budget Overview</h2>
-                            <div class="budget-period-selector">
-                                <select id="budget-period-select">
-                                    <option value="current">Current Month</option>
-                                    <option value="previous">Previous Month</option>
-                                    <option value="next">Next Month</option>
-                                </select>
-                            </div>
+                    <!-- No Budget Message -->
+                    <div id="no-budget-message" class="no-data-container" style="display: none;">
+                        <div class="no-data-message">
+                            <i class="fas fa-chart-pie"></i>
+                            <h3>No Budget Found</h3>
+                            <p>You don't have any budgets yet. Create your first budget to get started.</p>
+                            <button id="create-first-budget-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create First Budget
+                            </button>
                         </div>
-                        <div class="summary-cards">
-                            <div class="summary-card">
-                                <h3>Total Budget</h3>
-                                <p id="total-budget" class="card-value">$0.00</p>
-                            </div>
-                            <div class="summary-card">
-                                <h3>Total Spent</h3>
-                                <p id="total-spent" class="card-value negative">$0.00</p>
-                            </div>
-                            <div class="summary-card">
-                                <h3>Remaining Budget</h3>
-                                <p id="remaining-budget" class="card-value">$0.00</p>
-                            </div>
-                            <div class="summary-card">
-                                <h3>Budget Progress</h3>
-                                <div id="budget-progress" class="progress-container">
-                                    <div class="progress-bar" style="width: 0%"></div>
-                                    <span class="progress-text">0%</span>
+                    </div>
+
+                    <!-- Budget Dashboard Content -->
+                    <div id="budget-dashboard">
+                        <!-- Current Budget Overview -->
+                        <section class="current-budget-overview dashboard-card">
+                            <div class="card-header">
+                                <h2>Current Budget Overview</h2>
+                                <div class="budget-period-selector">
+                                    <select id="budget-period-select">
+                                        <option value="current">Current Month</option>
+                                        <option value="previous">Previous Month</option>
+                                        <option value="next">Next Month</option>
+                                    </select>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                            <div class="summary-cards">
+                                <div class="summary-card">
+                                    <h3>Total Budget</h3>
+                                    <p id="total-budget" class="card-value">$0.00</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h3>Total Spent</h3>
+                                    <p id="total-spent" class="card-value negative">$0.00</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h3>Remaining Budget</h3>
+                                    <p id="remaining-budget" class="card-value">$0.00</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h3>Budget Progress</h3>
+                                    <div id="budget-progress" class="progress-container">
+                                        <div class="progress-bar" style="width: 0%"></div>
+                                        <span class="progress-text">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
-                    <!-- Budget Categories -->
-                    <section class="budget-categories-section dashboard-card">
-                        <div class="card-header">
-                            <h2>Budget Categories</h2>
-                            <button id="manage-categories-btn" class="btn btn-secondary">Manage Categories</button>
-                        </div>
-                        <div class="card-content">
-                            <div id="categories-list" class="categories-list">
-                                <!-- Dynamically populated by JavaScript -->
-                                <div class="loading-placeholder">Loading budget categories...</div>
+                        <!-- Budget Categories -->
+                        <section class="budget-categories-section dashboard-card">
+                            <div class="card-header">
+                                <h2>Budget Categories</h2>
+                                <button id="manage-categories-btn" class="btn btn-secondary">Manage Categories</button>
                             </div>
-                        </div>
-                    </section>
+                            <div class="card-content">
+                                <div id="budget-categories" class="categories-list">
+                                    <!-- Dynamically populated by JavaScript -->
+                                    <div class="loading-placeholder">Loading budget categories...</div>
+                                </div>
+                            </div>
+                        </section>
 
-                    <!-- Budget vs. Actual Visualization -->
-                    <section class="budget-visualization dashboard-card">
-                        <div class="card-header">
-                            <h2>Budget vs. Actual</h2>
-                            <div class="chart-period-selector">
-                                <button class="btn btn-sm period-btn active" data-period="monthly">Monthly</button>
-                                <button class="btn btn-sm period-btn" data-period="quarterly">Quarterly</button>
-                                <button class="btn btn-sm period-btn" data-period="yearly">Yearly</button>
+                        <!-- Budget vs. Actual Visualization -->
+                        <section class="budget-visualization dashboard-card">
+                            <div class="card-header">
+                                <h2>Budget vs. Actual</h2>
+                                <div class="chart-period-selector">
+                                    <button class="btn btn-sm period-btn active" data-period="monthly">Monthly</button>
+                                    <button class="btn btn-sm period-btn" data-period="quarterly">Quarterly</button>
+                                    <button class="btn btn-sm period-btn" data-period="yearly">Yearly</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-content">
-                            <div id="budget-chart-container" class="chart-container">
-                                <canvas id="budget-chart"></canvas>
+                            <div class="card-content">
+                                <div id="budget-chart-container" class="chart-container">
+                                    <canvas id="budget-chart"></canvas>
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    </div>
                 </div>
 
                 <!-- Create/Edit Budget Modal -->
