@@ -23,6 +23,13 @@ class Transaction(db.Model):
     
     # For transfers between accounts
     transfer_account_id = db.Column(db.String(36), db.ForeignKey('accounts.id'), nullable=True)
+
+    # Add this after your existing relationships:
+    transfer_account = db.relationship(
+    'Account',
+    foreign_keys=[transfer_account_id],
+    backref=db.backref('incoming_transfers', lazy=True)
+    )
     
     # Relationships
     attachments = db.relationship('Attachment', backref='transaction', lazy=True, cascade="all, delete-orphan")

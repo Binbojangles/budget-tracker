@@ -20,7 +20,13 @@ class Account(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     
     # Relationships
-    transactions = db.relationship('Transaction', backref='account', lazy=True, cascade="all, delete-orphan")
+    transactions = db.relationship(
+    'Transaction', 
+    foreign_keys="Transaction.account_id",
+    backref='account', 
+    lazy=True, 
+    cascade="all, delete-orphan"   
+    )
     
     def __init__(self, name, account_type, user_id, balance=0.0, currency='USD'):
         self.name = name
