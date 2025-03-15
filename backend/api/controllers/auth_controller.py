@@ -5,6 +5,8 @@ import datetime
 import os
 import re
 from backend.models import User, db
+import logging  
+
 
 def validate_email(email):
     """
@@ -109,38 +111,59 @@ def register_user():
         db.session.rollback()
         return jsonify({"error": "Server error", "details": str(e)}), 500
 
+import logging
+
 def login_user():
     """Authenticate a user and return a token."""
     try:
-        # Log the incoming request data
-        print("Login request received:")
-        print("Request JSON:", request.get_json())
+        # Log the full request details for debugging
+        logging.info(f"Received login request")
+        logging.info(f"Request headers: {request.headers}")
+        logging.info(f"Request method: {request.method}")
         
-        data = request.get_json()
+        # Print request data for debugging
+        print("Request data:", request.get_json())
         
-        # More detailed validation logging
-        if not data.get('username'):
-            print("Missing username")
+        # Handle potential JSON parsing errors
+        try:
+            data = request.get_json()
+        except Exception as e:
+            logging.error(f"JSON parsing error: {str(e)}")
+            return jsonify({"error": "Invalid JSON in request"}), 400
+        
+        # Validate input
+        if not data:
+            logging.warning("No data received in login request")
+            return jsonify({"error": "No login data provided"}), 400
+        
+        username = data.get('username')
+        password = data.get('password')
+        
+        # More detailed validation
+        if not username:
+            logging.warning("Login attempt with no username")
             return jsonify({"error": "Username is required"}), 400
         
-        if not data.get('password'):
-            print("Missing password")
+        if not password:
+            logging.warning("Login attempt with no password")
             return jsonify({"error": "Password is required"}), 400
         
         # Find the user by username
-        user = User.query.filter_by(username=data['username']).first()
+        user = User.query.filter_by(username=username).first()
         
-        # Detailed authentication logging
+        # Authentication checks
         if not user:
-            print(f"User not found: {data['username']}")
+            logging.warning(f"Login attempt for non-existent user: {username}")
             return jsonify({"error": "Invalid credentials"}), 401
         
-        if not user.check_password(data['password']):
-            print(f"Invalid password for user: {data['username']}")
+        if not user.check_password(password):
+            logging.warning(f"Invalid password attempt for user: {username}")
             return jsonify({"error": "Invalid credentials"}), 401
         
         # Generate token
         token = generate_auth_token(user.id)
+        
+        logging.info(f"Successful login for user: {username}")
         
         return jsonify({
             "message": "Login successful",
@@ -155,8 +178,9 @@ def login_user():
         }), 200
         
     except Exception as e:
-        # Catch-all error logging
-        print(f"Unexpected login error: {str(e)}")
+        # Comprehensive error logging
+        logging.error(f"Unexpected login error: {str(e)}")
+        print(f"Full login error details: {str(e)}")
         return jsonify({"error": "Server error", "details": str(e)}), 500
 
 def generate_auth_token(user_id):

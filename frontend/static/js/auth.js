@@ -47,10 +47,37 @@ function initAuth() {
 async function handleLogin(event) {
     event.preventDefault();
     
-    // Add more detailed logging
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const errorMsg = document.getElementById('login-error');
+    
+    // Extensive logging
     console.log('Login attempt started');
+    console.log('Username:', usernameInput ? usernameInput.value : 'Input not found');
+    console.log('Password:', passwordInput ? '***' : 'Input not found');
+    
+    // Validate input
+    if (!usernameInput || !passwordInput) {
+        console.error('Login form inputs not found');
+        if (errorMsg) errorMsg.textContent = 'Login form error';
+        return;
+    }
+    
+    if (!usernameInput.value || !passwordInput.value) {
+        console.warn('Username or password is empty');
+        if (errorMsg) errorMsg.textContent = 'Username and password are required';
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Logging in...';
+    }
     
     try {
+        console.log('Sending login request...');
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
@@ -62,7 +89,6 @@ async function handleLogin(event) {
             })
         });
         
-        // Log the raw response
         console.log('Response status:', response.status);
         
         const data = await response.json();
@@ -72,10 +98,27 @@ async function handleLogin(event) {
             throw new Error(data.error || 'Login failed');
         }
         
-        // Rest of login logic...
+        // Store auth token and user data
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user_data', JSON.stringify(data.user));
+        
+        // Update auth UI
+        updateAuthUI(true, data.user);
+        
+        // Redirect to dashboard
+        window.location.href = '/dashboard';
+        
     } catch (error) {
         console.error('Complete login error:', error);
-        if (errorMsg) errorMsg.textContent = error.message;
+        if (errorMsg) {
+            errorMsg.textContent = error.message || 'An unexpected error occurred';
+        }
+    } finally {
+        // Reset button state
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Login';
+        }
     }
 }
 

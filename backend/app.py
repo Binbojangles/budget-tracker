@@ -8,9 +8,40 @@ from backend.api.routes.account_routes import account_bp
 from backend.api.routes.transaction_routes import transaction_bp
 from backend.api.routes.upload_routes import upload_bp
 from backend.api.routes.analysis_routes import analysis_bp
+import logging
+from logging.handlers import RotatingFileHandler
+from flask import request
 
 # Load environment variables
 load_dotenv()
+
+def configure_logging(app):
+    # Ensure logs directory exists
+    log_dir = 'logs'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # Configure file logging
+    file_handler = RotatingFileHandler(
+        os.path.join(log_dir, 'app.log'), 
+        maxBytes=10240, 
+        backupCount=10
+    )
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+    file_handler.setLevel(logging.INFO)
+    
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    
+    # Add handlers to app logger
+    app.logger.addHandler(file_handler)
+    app.logger.addHandler(console_handler)
+    app.logger.setLevel(logging.INFO)
+
+
 
 def create_app(config=None):
     """Create and configure the Flask app."""
@@ -48,6 +79,23 @@ def create_app(config=None):
     app.register_blueprint(upload_bp)
     app.register_blueprint(analysis_bp)
     
+    def setup_logging(app):
+    # Configure logging
+        handler = logging.FileHandler('app.log')
+        handler.setLevel(logging.INFO)
+        app.logger.addHandler(handler)
+    
+    # Log all requests
+    @app.before_request
+    def log_request_info():
+        app.logger.info(f'Request Headers: {request.headers}')
+        app.logger.info(f'Request Path: {request.path}')
+        app.logger.info(f'Request Method: {request.method}')
+        
+        # Log form data (be careful with sensitive info)
+        if request.method == 'POST':
+            app.logger.info(f'Request Form Data: {request.form}')
+    
     # Health check route
     @app.route('/api/health')
     def health_check():
@@ -77,6 +125,24 @@ def create_app(config=None):
     with app.app_context():
         db.create_all()
     
+    # Add logging setup
+    setup_logging(app)
+
+    # Enable CORS with more permissive settings
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": "*",
+            "allow_headers": [
+                "Content-Type", 
+                "Authorization", 
+                "Access-Control-Allow-Credentials"
+            ],
+            "supports_credentials": True
+        }
+    })
+
+    configure_logging(app)
+
     return app
 
 # Create the app
