@@ -1,5 +1,8 @@
 # Budget Tracker
 
+## ** THIS IS A WORK IN PROGRESS, FUNCTIONALITY IS NOT COMPLETE. **
+Do not be surprised if parts of this application are non-functional, and if it is not production ready.
+
 A comprehensive personal finance application that helps you track your expenses, monitor budgets, and visualize your financial health.
 
 ## Features
