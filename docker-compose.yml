@@ -8,8 +8,13 @@ services:
     environment:
       - ENVIRONMENT=development
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/budget_tracker
+      - SECRET_KEY=apppassword
+      - JWT_SECRET_KEY=jwtpassword
     depends_on:
       - db
+    command: >
+      bash -c "python init_db.py && 
+              gunicorn --bind 0.0.0.0:8000 --reload backend.app:app"
 
   db:
     image: postgres:14
