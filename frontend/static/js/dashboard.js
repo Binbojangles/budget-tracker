@@ -14,6 +14,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize the dashboard
     initDashboard();
+    
+    // Apply dark mode if already enabled
+    if (document.body.classList.contains('dark-mode')) {
+        applyDarkModeToNewElements();
+    }
+    
+    // Listen for theme changes to apply dark mode to new elements
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class' && 
+                mutation.target === document.body) {
+                applyDarkModeToNewElements();
+            }
+        });
+    });
+    
+    observer.observe(document.body, { attributes: true });
 });
 
 // Hide error message 
@@ -77,6 +94,9 @@ async function initDashboard() {
                 showError('Could not load some dashboard data. You may need to refresh.');
             }, 500); // Delay error message to prevent it appearing then immediately disappearing
         }
+        
+        // Apply dark mode if needed
+        applyDarkModeToNewElements();
         
     } catch (error) {
         console.error('Critical error initializing dashboard:', error);
@@ -796,5 +816,84 @@ function showLoading(show) {
     if (loadingIndicator && dashboardContent) {
         loadingIndicator.style.display = show ? 'flex' : 'none';
         dashboardContent.style.display = show ? 'none' : 'block';
+    }
+}
+
+// Add dark mode class to dynamically created elements if dark mode is active
+function applyDarkModeToNewElements() {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    
+    // Apply/remove dark mode to account cards if they exist
+    const accountCards = document.querySelectorAll('.account-card');
+    accountCards.forEach(card => {
+        if (isDarkMode) {
+            card.style.backgroundColor = '#333';
+            card.style.borderColor = '#444';
+            card.style.color = '#e0e0e0';
+            card.classList.add('dark-mode-applied');
+        } else if (card.classList.contains('dark-mode-applied')) {
+            card.style.backgroundColor = '';
+            card.style.borderColor = '';
+            card.style.color = '';
+            card.classList.remove('dark-mode-applied');
+        }
+    });
+
+    // Apply/remove dark mode to financial overview elements if they exist
+    const overviewElements = document.querySelectorAll('.total-assets, .total-liabilities, .net-worth, .summary-card, .assets, .debt, .net-worth');
+    overviewElements.forEach(element => {
+        if (isDarkMode) {
+            element.style.backgroundColor = '#333';
+            element.style.borderColor = '#444';
+            element.style.color = '#e0e0e0';
+            element.classList.add('dark-mode-applied');
+        } else if (element.classList.contains('dark-mode-applied')) {
+            element.style.backgroundColor = '';
+            element.style.borderColor = '';
+            element.style.color = '';
+            element.classList.remove('dark-mode-applied');
+        }
+    });
+
+    // Apply/remove dark mode to specific text labels
+    const labels = document.querySelectorAll('.label, .account-type, .summary-card h3');
+    labels.forEach(label => {
+        if (isDarkMode) {
+            label.style.color = '#ccc';
+            label.classList.add('dark-mode-applied');
+        } else if (label.classList.contains('dark-mode-applied')) {
+            label.style.color = '';
+            label.classList.remove('dark-mode-applied');
+        }
+    });
+
+    // Apply/remove dark mode to values
+    const values = document.querySelectorAll('.value, .account-balance, .card-value');
+    values.forEach(value => {
+        if (isDarkMode) {
+            if (value.classList.contains('positive')) {
+                value.style.color = '#28a745';
+            } else if (value.classList.contains('negative')) {
+                value.style.color = '#dc3545';
+            } else {
+                value.style.color = '#e0e0e0';
+            }
+            value.classList.add('dark-mode-applied');
+        } else if (value.classList.contains('dark-mode-applied')) {
+            value.style.color = value.classList.contains('positive') ? '#28a745' : 
+                               value.classList.contains('negative') ? '#dc3545' : '';
+            value.classList.remove('dark-mode-applied');
+        }
+    });
+}
+
+// Helper function to get user data
+function getUserData() {
+    try {
+        const userData = localStorage.getItem('user_data');
+        return userData ? JSON.parse(userData) : null;
+    } catch (e) {
+        console.error('Error parsing user data:', e);
+        return null;
     }
 }

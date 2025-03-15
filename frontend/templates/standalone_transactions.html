@@ -4,14 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transactions - Budget Tracker</title>
+    <link rel="stylesheet" href="/static/css/fonts.css">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/app.css">
     <link rel="stylesheet" href="/static/css/transactions.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Chart.js for visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Theme switcher script -->
+    <script src="/static/js/theme.js"></script>
 </head>
 <body>
+    <script>
+        // Apply saved theme immediately before page renders
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme)) {
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
     <div id="app">
         <header class="app-header">
             <div class="logo">
@@ -26,10 +40,27 @@
                     <li><a href="/reports" data-force-reload="true"><i class="fas fa-chart-line"></i> Reports</a></li>
                 </ul>
             </nav>
+            <div class="theme-toggle" id="theme-toggle" onclick="document.body.classList.toggle('dark-mode'); var icon = this.querySelector('i'); if(document.body.classList.contains('dark-mode')){localStorage.setItem('theme', 'dark'); icon.className = 'fas fa-sun';}else{localStorage.setItem('theme', 'light'); icon.className = 'fas fa-moon';}">
+                <i class="fas fa-moon"></i>
+            </div>
+            <script>
+                // Initialize theme on load
+                window.addEventListener('DOMContentLoaded', function() {
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    
+                    if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme)) {
+                        document.body.classList.add('dark-mode');
+                        document.querySelector('#theme-toggle i').className = 'fas fa-sun';
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                        document.querySelector('#theme-toggle i').className = 'fas fa-moon';
+                    }
+                });
+            </script>
             <div class="user-menu">
                 <div class="user-info">
-                    <span id="user-name">Loading...</span>
-                    <img src="/static/img/default-avatar.png" alt="User Avatar" class="avatar">
+                    <span id="user-name"><i class="fas fa-user-circle"></i> Loading...</span>
                 </div>
                 <div class="dropdown-menu">
                     <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>

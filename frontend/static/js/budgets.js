@@ -2488,3 +2488,122 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM is ready, initializing Budget Manager');
     BudgetManager.init();
 });
+
+// Add dark mode class to dynamically created elements on budget page
+function applyDarkModeToBudgetElements() {
+    if (document.body.classList.contains('dark-mode')) {
+        // Apply dark mode to category items
+        const categoryItems = document.querySelectorAll('.category-item, .category-card');
+        categoryItems.forEach(item => {
+            if (!item.classList.contains('dark-mode-applied')) {
+                item.style.backgroundColor = '#333';
+                item.style.borderColor = '#444';
+                item.style.color = '#e0e0e0';
+                item.classList.add('dark-mode-applied');
+            }
+        });
+
+        // Apply dark mode to category names and amounts
+        const categoryNames = document.querySelectorAll('.category-name, .category-details h3');
+        categoryNames.forEach(name => {
+            if (!name.classList.contains('dark-mode-applied')) {
+                name.style.color = '#e0e0e0';
+                name.classList.add('dark-mode-applied');
+            }
+        });
+
+        // Apply dark mode to category amounts
+        const categoryAmounts = document.querySelectorAll('.category-amount, .category-budget .spent, .category-budget .amount');
+        categoryAmounts.forEach(amount => {
+            if (!amount.classList.contains('dark-mode-applied')) {
+                amount.style.color = '#e0e0e0';
+                amount.classList.add('dark-mode-applied');
+            }
+        });
+
+        // Apply dark mode to progress bars
+        const progressBars = document.querySelectorAll('.category-progress, .progress-bar, .progress-container');
+        progressBars.forEach(bar => {
+            if (!bar.classList.contains('dark-mode-applied')) {
+                bar.style.backgroundColor = '#444';
+                bar.classList.add('dark-mode-applied');
+            }
+        });
+
+        // Apply dark mode to status text
+        const statusTexts = document.querySelectorAll('.category-status, .progress-text, .progress-label');
+        statusTexts.forEach(text => {
+            if (!text.classList.contains('dark-mode-applied')) {
+                text.style.color = '#ccc';
+                text.classList.add('dark-mode-applied');
+            }
+        });
+    }
+}
+
+// Function to initialize budgets
+function initBudgets() {
+    try {
+        // Show loading indicator
+        showElement('budgets-loading');
+        hideElement('budgets-content');
+        hideElement('no-budget-message');
+        
+        // Load budgets data
+        loadBudgetsData()
+            .then(hasBudgets => {
+                // Hide loading indicator
+                hideElement('budgets-loading');
+                
+                if (hasBudgets) {
+                    showElement('budgets-content');
+                    hideElement('no-budget-message');
+                } else {
+                    hideElement('budgets-content');
+                    showElement('no-budget-message');
+                }
+                
+                // Apply dark mode to newly created elements
+                applyDarkModeToBudgetElements();
+            })
+            .catch(error => {
+                console.error('Error loading budgets:', error);
+                showError('Failed to load budget data. Please try again later.');
+                hideElement('budgets-loading');
+            });
+            
+        // Set up event listeners
+        setupEventListeners();
+        
+    } catch (error) {
+        console.error('Error initializing budgets:', error);
+        showError('An unexpected error occurred. Please try again later.');
+        hideElement('budgets-loading');
+    }
+}
+
+// Initialize UI when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize budgets
+    initBudgets();
+    
+    // Initialize budget manager
+    BudgetManager.init();
+    
+    // Apply dark mode styles to dynamically created elements
+    if (document.body.classList.contains('dark-mode')) {
+        applyDarkModeToBudgetElements();
+    }
+    
+    // Listen for theme changes to apply dark mode to new elements
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class' && 
+                mutation.target === document.body) {
+                applyDarkModeToBudgetElements();
+            }
+        });
+    });
+    
+    observer.observe(document.body, { attributes: true });
+});

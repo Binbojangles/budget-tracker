@@ -374,3 +374,416 @@
         padding: 0 5px;
     }
 }
+
+/* Dashboard Page Specific Styles */
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.dashboard-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-row .dashboard-card {
+    flex: 1;
+    min-width: 300px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+/* Financial Overview Section */
+.accounts-overview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.financial-summary {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 250px;
+}
+
+.summary-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #007bff;
+}
+
+.summary-item h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+.summary-item p {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.summary-item.positive {
+    border-left-color: #28a745;
+}
+
+.summary-item.negative {
+    border-left-color: #dc3545;
+}
+
+.summary-item.neutral {
+    border-left-color: #6c757d;
+}
+
+/* Recent Transactions */
+.recent-transactions {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-info h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.transaction-date {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.transaction-category {
+    display: inline-block;
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 0.25rem;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.transaction-amount.positive {
+    color: #28a745;
+}
+
+.transaction-amount.negative {
+    color: #dc3545;
+}
+
+/* Charts */
+.chart-container {
+    height: 300px;
+    padding: 1.5rem;
+    position: relative;
+}
+
+/* Budget Progress */
+.budget-progress {
+    padding: 1.5rem;
+}
+
+.progress-item {
+    margin-bottom: 1.5rem;
+}
+
+.progress-item:last-child {
+    margin-bottom: 0;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.progress-category {
+    font-weight: 500;
+    color: #333;
+}
+
+.progress-values {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.progress-container {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-bar.under {
+    background-color: #28a745;
+}
+
+.progress-bar.over {
+    background-color: #dc3545;
+}
+
+.progress-bar.near {
+    background-color: #ffc107;
+}
+
+/* Loading placeholders */
+.loading-placeholder {
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Dark Mode Styles for Dashboard */
+body.dark-mode .dashboard-card {
+    background-color: #2d2d2d;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+body.dark-mode .card-header {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .card-header h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .accounts-overview {
+    color: #e0e0e0;
+}
+
+body.dark-mode .summary-item {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .summary-item h3 {
+    color: #ccc;
+}
+
+body.dark-mode .summary-item p {
+    color: #e0e0e0;
+}
+
+body.dark-mode .summary-item.positive {
+    border-left-color: #28a745;
+}
+
+body.dark-mode .summary-item.negative {
+    border-left-color: #dc3545;
+}
+
+body.dark-mode .summary-item.neutral {
+    border-left-color: #6c757d;
+}
+
+body.dark-mode .transaction-item {
+    border-color: #444;
+}
+
+body.dark-mode .transaction-info h4 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .transaction-date {
+    color: #bbb;
+}
+
+body.dark-mode .transaction-category {
+    background-color: #444;
+    color: #ccc;
+}
+
+body.dark-mode .transaction-amount {
+    color: #e0e0e0;
+}
+
+body.dark-mode .transaction-amount.positive {
+    color: #28a745;
+}
+
+body.dark-mode .transaction-amount.negative {
+    color: #dc3545;
+}
+
+body.dark-mode .progress-category {
+    color: #e0e0e0;
+}
+
+body.dark-mode .progress-values {
+    color: #bbb;
+}
+
+body.dark-mode .progress-container {
+    background-color: #444;
+}
+
+/* Additional dark mode styles for specific dashboard components */
+body.dark-mode .summary-card {
+    background-color: #333;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .summary-card h3 {
+    color: #ccc;
+}
+
+body.dark-mode .card-value {
+    color: #e0e0e0;
+}
+
+/* Specific styles for total assets, debts, and net worth elements */
+body.dark-mode .account-summary {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .financial-overview-card {
+    background-color: #333;
+}
+
+body.dark-mode .total-assets,
+body.dark-mode .total-liabilities,
+body.dark-mode .net-worth {
+    background-color: #333;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .total-assets h3,
+body.dark-mode .total-liabilities h3,
+body.dark-mode .net-worth h3 {
+    color: #ccc;
+}
+
+body.dark-mode .total-assets p,
+body.dark-mode .total-liabilities p,
+body.dark-mode .net-worth p {
+    color: #e0e0e0;
+}
+
+/* Additional styles for specific dashboard elements */
+body.dark-mode .total-assets-card,
+body.dark-mode .total-debt-card,
+body.dark-mode .net-worth-card {
+    background-color: #333;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .financial-overview-section {
+    background-color: #2d2d2d;
+}
+
+body.dark-mode .financial-overview-section h2,
+body.dark-mode .financial-overview-section h3,
+body.dark-mode .financial-overview-section p {
+    color: #e0e0e0;
+}
+
+body.dark-mode .financial-details {
+    color: #ccc;
+}
+
+body.dark-mode .total-amount,
+body.dark-mode .account-total,
+body.dark-mode .account-balance {
+    color: #e0e0e0;
+}
+
+body.dark-mode .positive-amount {
+    color: #28a745;
+}
+
+body.dark-mode .negative-amount {
+    color: #dc3545;
+}
+
+/* Dashboard financial summary section */
+body.dark-mode #accounts-overview,
+body.dark-mode .accounts-overview {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-mode #accounts-overview .summary-item,
+body.dark-mode .accounts-overview .summary-item {
+    background-color: #333;
+    border-color: #444;
+}
+
+/* Explicitly target all possible financial summary elements */
+body.dark-mode .financial-summary,
+body.dark-mode .financial-overview,
+body.dark-mode .account-summary {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .assets-section,
+body.dark-mode .liabilities-section,
+body.dark-mode .net-worth-section {
+    background-color: #333;
+    color: #e0e0e0;
+    border-color: #444;
+}

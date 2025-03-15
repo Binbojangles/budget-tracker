@@ -751,4 +751,258 @@
     background-color: #f8f9fa;
     border-radius: 5px;
     border: 1px solid #e9ecef;
+}
+
+/* Dark Mode Styles for Budgets */
+body.dark-mode .summary-cards {
+    color: #e0e0e0;
+}
+
+body.dark-mode .summary-card {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .summary-card h3 {
+    color: #ccc;
+}
+
+body.dark-mode .card-value {
+    color: #e0e0e0;
+}
+
+body.dark-mode .progress-text {
+    color: #ccc;
+}
+
+body.dark-mode .category-item {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .category-name {
+    color: #e0e0e0;
+}
+
+body.dark-mode .category-amount {
+    color: #e0e0e0;
+}
+
+body.dark-mode .category-progress {
+    background-color: #444;
+}
+
+body.dark-mode .category-status {
+    color: #ccc;
+}
+
+body.dark-mode .modal-content {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .close-modal {
+    color: #ccc;
+}
+
+body.dark-mode .close-modal:hover {
+    color: #fff;
+}
+
+body.dark-mode .budget-category-row {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .category-label {
+    color: #e0e0e0;
+}
+
+body.dark-mode .category-value {
+    color: #e0e0e0;
+}
+
+body.dark-mode .total-section {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .total-amount {
+    color: #e0e0e0;
+}
+
+body.dark-mode .no-data-message {
+    background-color: #333;
+}
+
+body.dark-mode .no-data-message i {
+    color: #555;
+}
+
+body.dark-mode .no-data-message h3 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .no-data-message p {
+    color: #ccc;
+}
+
+body.dark-mode .category-list li {
+    border-color: #444;
+    background-color: #333;
+}
+
+body.dark-mode .category-list .category-name {
+    color: #e0e0e0;
+}
+
+body.dark-mode .category-list .edit-btn {
+    color: #4dabf7;
+}
+
+body.dark-mode .category-list .delete-btn {
+    color: #ff6b6b;
+}
+
+/* Additional dark mode styles for budget categories */
+body.dark-mode .dashboard-card {
+    background-color: #2d2d2d;
+    border-color: #444;
+}
+
+body.dark-mode .card-header {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .card-header h2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .card-content {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+/* Budget categories list specific styling */
+body.dark-mode .categories-list {
+    background-color: #2d2d2d;
+}
+
+body.dark-mode .category-card {
+    background-color: #333;
+    border-color: #444;
+    color: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .category-card:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .category-header {
+    border-color: #444;
+}
+
+body.dark-mode .category-details h3,
+body.dark-mode .category-details p {
+    color: #e0e0e0;
+}
+
+body.dark-mode .category-budget {
+    color: #ccc;
+}
+
+body.dark-mode .category-budget .spent {
+    color: #e0e0e0;
+}
+
+body.dark-mode .category-budget .separator {
+    color: #666;
+}
+
+body.dark-mode .category-budget .amount {
+    color: #bbb;
+}
+
+body.dark-mode .category-icon {
+    background-color: rgba(52, 152, 219, 0.2);
+}
+
+body.dark-mode .progress-bar,
+body.dark-mode .progress-fill {
+    background-color: #444;
+}
+
+body.dark-mode .progress-fill {
+    background-color: #3498db;
+}
+
+body.dark-mode .good .progress-fill {
+    background-color: #28a745;
+}
+
+body.dark-mode .warning .progress-fill {
+    background-color: #ffc107;
+}
+
+body.dark-mode .over-budget .progress-fill {
+    background-color: #dc3545;
+}
+
+body.dark-mode .progress-label {
+    color: #bbb;
+}
+
+/* Budget form elements */
+body.dark-mode #budget-categories-container {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .form-group label {
+    color: #ccc;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group select {
+    background-color: #444;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus {
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.25);
+}
+
+/* Budget period selector */
+body.dark-mode .budget-period-selector select {
+    background-color: #444;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+/* Chart period buttons */
+body.dark-mode .period-btn {
+    background-color: #444;
+    border-color: #555;
+    color: #ccc;
+}
+
+body.dark-mode .period-btn:hover {
+    background-color: #555;
+}
+
+body.dark-mode .period-btn.active {
+    background-color: #3498db;
+    color: #fff;
+    border-color: #2980b9;
+}
+
+/* Ensure all categories are properly styled */
+body.dark-mode #budget-categories {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
 } 
