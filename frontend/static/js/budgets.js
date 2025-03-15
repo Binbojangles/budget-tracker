@@ -1129,36 +1129,40 @@ const BudgetManager = {
     
     // Attach event listeners to category elements
     attachCategoryEventListeners: function() {
-        // Add category button
-        const addCategoryBtn = document.getElementById('add-category-btn');
-        if (addCategoryBtn) {
-            // Remove any existing event listeners (to prevent duplicates)
-            const newAddCategoryBtn = addCategoryBtn.cloneNode(true);
-            addCategoryBtn.parentNode.replaceChild(newAddCategoryBtn, addCategoryBtn);
-            
-            // Add new event listener
-            newAddCategoryBtn.addEventListener('click', () => this.showAddCategoryModal());
-            console.log('Attached click event to add category button');
-        }
+        console.log('Debug: attachCategoryEventListeners - Attaching category-specific event listeners');
         
         // Edit category buttons
         const editButtons = document.querySelectorAll('.edit-category-btn');
-        editButtons.forEach(button => {
-            // Remove any existing event listeners
+        console.log(`Debug: Found ${editButtons.length} edit category buttons`);
+        
+        editButtons.forEach((button, index) => {
+            // Clone to remove existing listeners
             const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
+            if (button.parentNode) {
+                button.parentNode.replaceChild(newButton, button);
+            }
             
-            // Add new event listener
+            // Add click event
             newButton.addEventListener('click', (e) => {
-                const categoryId = e.currentTarget.dataset.categoryId;
-                console.log('Edit button clicked for category ID:', categoryId);
+                e.preventDefault();
+                const categoryId = newButton.dataset.categoryId || 
+                                  newButton.getAttribute('data-category-id') ||
+                                  (newButton.closest('.category-card') ? 
+                                   newButton.closest('.category-card').dataset.categoryId : null);
+                
+                console.log('Debug: Edit button clicked for category ID:', categoryId);
+                
                 if (categoryId) {
                     this.showEditCategoryModal(categoryId);
+                } else {
+                    console.error('Debug: No category ID found for edit button');
                 }
             });
+            
+            console.log(`Debug: Attached click event to edit button ${index}`);
         });
         
-        console.log('Attached events to', editButtons.length, 'edit category buttons');
+        console.log('Debug: Category event listeners attached');
     },
     
     // Initialize all event listeners
@@ -1906,98 +1910,122 @@ const BudgetManager = {
     
     // Attach all event listeners
     attachEventListeners: function() {
-        console.log('Attaching event listeners');
+        console.log('Debug: attachEventListeners - Starting to attach event listeners');
+        
+        // Helper function to safely add event listener
+        const safeAddEventListener = (selector, event, handler) => {
+            const elements = document.querySelectorAll(selector);
+            console.log(`Debug: Found ${elements.length} elements matching selector "${selector}"`);
+            
+            elements.forEach((element, index) => {
+                // Clone element to remove any existing event listeners
+                const newElement = element.cloneNode(true);
+                if (element.parentNode) {
+                    element.parentNode.replaceChild(newElement, element);
+                    console.log(`Debug: Replaced element ${index} to clear existing listeners`);
+                }
+                
+                // Add new event listener
+                newElement.addEventListener(event, handler);
+                console.log(`Debug: Added ${event} event listener to element ${index}`);
+            });
+            
+            return elements.length > 0;
+        };
         
         // Budget selector change event
-        const budgetSelector = document.getElementById('budget-selector');
-        if (budgetSelector) {
-            budgetSelector.addEventListener('change', (e) => {
-                const selectedBudgetId = e.target.value;
-                if (selectedBudgetId) {
-                    this.switchBudget(selectedBudgetId);
-                }
-            });
-        }
+        safeAddEventListener('#budget-selector', 'change', (e) => {
+            const selectedBudgetId = e.target.value;
+            if (selectedBudgetId) {
+                console.log('Debug: Budget selector changed to', selectedBudgetId);
+                this.switchBudget(selectedBudgetId);
+            }
+        });
         
-        // Create budget button
-        const createBudgetBtn = document.getElementById('create-budget-btn');
-        if (createBudgetBtn) {
-            createBudgetBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showCreateBudgetModal();
-            });
-        }
+        // Create budget button (both main and in no-budget message)
+        safeAddEventListener('#create-budget-btn, #create-first-budget-btn', 'click', (e) => {
+            e.preventDefault();
+            console.log('Debug: Create budget button clicked');
+            this.showCreateBudgetModal();
+        });
         
         // Add category button
-        const addCategoryBtn = document.getElementById('add-category-btn');
-        if (addCategoryBtn) {
-            addCategoryBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showAddCategoryModal();
-            });
-        }
+        safeAddEventListener('#add-category-btn', 'click', (e) => {
+            e.preventDefault();
+            console.log('Debug: Add category button clicked');
+            this.showAddCategoryModal();
+        });
         
         // Budget form submission
-        const budgetForm = document.getElementById('budget-form');
-        if (budgetForm) {
-            budgetForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.handleBudgetFormSubmit();
-            });
-        }
+        safeAddEventListener('#budget-form', 'submit', (e) => {
+            e.preventDefault();
+            console.log('Debug: Budget form submitted');
+            this.handleBudgetFormSubmit();
+        });
         
         // Category form submission
-        const categoryForm = document.getElementById('category-form');
-        if (categoryForm) {
-            categoryForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.handleCategoryFormSubmit();
-            });
-        }
+        safeAddEventListener('#category-form', 'submit', (e) => {
+            e.preventDefault();
+            console.log('Debug: Category form submitted');
+            this.handleCategoryFormSubmit();
+        });
         
         // Modal close buttons
-        const closeButtons = document.querySelectorAll('.close-modal');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.closeAllModals();
-            });
+        safeAddEventListener('.close-modal', 'click', (e) => {
+            e.preventDefault();
+            console.log('Debug: Close modal button clicked');
+            this.closeAllModals();
         });
         
         // Modal overlay click to close
         const modalOverlay = document.querySelector('.modal-overlay');
         if (modalOverlay) {
-            modalOverlay.addEventListener('click', (e) => {
+            const newOverlay = modalOverlay.cloneNode(true);
+            modalOverlay.parentNode.replaceChild(newOverlay, modalOverlay);
+            
+            newOverlay.addEventListener('click', (e) => {
                 // Only close if clicking directly on the overlay, not on modal content
-                if (e.target === modalOverlay) {
+                if (e.target === newOverlay) {
+                    console.log('Debug: Modal overlay clicked');
                     this.closeAllModals();
                 }
             });
+            console.log('Debug: Added click event listener to modal overlay');
+        } else {
+            console.log('Debug: Modal overlay not found');
         }
         
         // Category delete button in edit modal
-        const deleteCategoryBtn = document.getElementById('delete-category-btn');
-        if (deleteCategoryBtn) {
-            deleteCategoryBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const categoryId = document.getElementById('category-form').dataset.categoryId;
+        safeAddEventListener('#delete-category-btn', 'click', (e) => {
+            e.preventDefault();
+            const form = document.getElementById('category-form');
+            if (form) {
+                const categoryId = form.dataset.categoryId;
                 if (categoryId) {
+                    console.log('Debug: Delete category button clicked for category', categoryId);
                     this.deleteCategoryFromBudget(categoryId);
+                } else {
+                    console.log('Debug: No category ID found in form data attributes');
                 }
-            });
-        }
+            } else {
+                console.log('Debug: Category form not found for delete operation');
+            }
+        });
         
         // Sort buttons
-        const sortButtons = document.querySelectorAll('.sort-button');
-        sortButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const sortField = button.dataset.sort;
-                if (sortField) {
-                    this.handleSortButtonClick(sortField);
-                }
-            });
+        safeAddEventListener('.sort-button', 'click', (e) => {
+            e.preventDefault();
+            const sortField = e.currentTarget.dataset.sort;
+            if (sortField) {
+                console.log('Debug: Sort button clicked for field', sortField);
+                this.handleSortButtonClick(sortField);
+            }
         });
+        
+        // Attach category-specific event listeners
+        this.attachCategoryEventListeners();
+        
+        console.log('Debug: All event listeners attached');
     }
 };
 
