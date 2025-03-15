@@ -1,0 +1,33 @@
+# Core framework
+flask==2.3.2
+flask-sqlalchemy==3.0.5
+flask-cors==4.0.0
+python-dotenv==1.0.0
+werkzeug==2.3.6
+
+# Database
+sqlalchemy==2.0.19
+alembic==1.11.1
+psycopg2-binary==2.9.6
+
+# Authentication
+pyjwt==2.7.0
+bcrypt==4.0.1
+
+# Data processing
+pandas==2.0.3
+numpy==1.25.1
+openpyxl==3.1.2
+pdfplumber==0.9.0
+matplotlib==3.7.2
+seaborn==0.12.2
+
+# File handling
+Pillow==10.0.0
+
+# Testing
+pytest==7.4.0
+pytest-flask==1.2.0
+
+# Development
+gunicorn==21.2.0

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Budget Tracker</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Budget Tracker</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/dashboard" class="active">Dashboard</a></li>
+                <li><a href="/transactions">Transactions</a></li>
+                <li><a href="/accounts">Accounts</a></li>
+                <li><a href="/budgets">Budgets</a></li>
+                <li><a href="/reports">Reports</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+        <div class="user-menu">
+            <span id="user-name">John Doe</span>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </header>
+    
+    <main id="dashboard-container">
+        <section id="overview-section">
+            <h2>Financial Overview</h2>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Balance</h3>
+                    <p id="total-balance" class="card-value">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Assets</h3>
+                    <p id="total-assets" class="card-value positive">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Liabilities</h3>
+                    <p id="total-liabilities" class="card-value negative">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Monthly Budget</h3>
+                    <p id="monthly-budget" class="card-value">$0.00</p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="dashboard-grid">
+            <section id="accounts-section" class="dashboard-card">
+                <div class="card-header">
+                    <h2>Your Accounts</h2>
+                    <a href="/accounts" class="view-all-btn">Manage Accounts</a>
+                </div>
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Loading accounts...</p>
+                </div>
+                <div id="accounts-summary" class="card-content">
+                    <!-- Account cards will be dynamically inserted here -->
+                </div>
+            </section>
+            
+            <section id="recent-transactions-section" class="dashboard-card">
+                <div class="card-header">
+                    <h2>Recent Transactions</h2>
+                    <a href="/transactions" class="view-all-btn">View All</a>
+                </div>
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Loading transactions...</p>
+                </div>
+                <div id="recent-transactions-list" class="card-content">
+                    <!-- Recent transactions will be dynamically inserted here -->
+                </div>
+            </section>
+            
+            <section id="spending-section" class="dashboard-card">
+                <div class="card-header">
+                    <h2>Spending by Category</h2>
+                    <div class="period-selector">
+                        <button class="period-btn active" data-period="month">Month</button>
+                        <button class="period-btn" data-period="quarter">Quarter</button>
+                        <button class="period-btn" data-period="year">Year</button>
+                    </div>
+                </div>
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Loading spending data...</p>
+                </div>
+                <div id="spending-chart" class="card-content chart-container">
+                    <!-- Spending chart will be dynamically inserted here -->
+                </div>
+            </section>
+            
+            <section id="trends-section" class="dashboard-card">
+                <div class="card-header">
+                    <h2>Monthly Spending Trends</h2>
+                </div>
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Loading trends...</p>
+                </div>
+                <div id="trend-chart" class="card-content chart-container">
+                    <!-- Trend chart will be dynamically inserted here -->
+                </div>
+            </section>
+            
+            <section id="recommendations-section" class="dashboard-card">
+                <div class="card-header">
+                    <h2>Smart Recommendations</h2>
+                </div>
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Loading recommendations...</p>
+                </div>
+                <div id="recommendations-list" class="card-content">
+                    <!-- Recommendations will be dynamically inserted here -->
+                </div>
+            </section>
+            
+            <section id="quick-actions-section" class="dashboard-card">
+                <div class="card-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="card-content">
+                    <div class="quick-actions">
+                        <a href="/transactions/new" class="action-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Transaction</span>
+                        </a>
+                        <a href="/upload/statement" class="action-btn">
+                            <i class="fas fa-upload"></i>
+                            <span>Import Statement</span>
+                        </a>
+                        <a href="/budgets/new" class="action-btn">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Create Budget</span>
+                        </a>
+                        <a href="/reports" class="action-btn">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Generate Report</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Budget Tracker. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/about">About</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/help">Help</a>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
