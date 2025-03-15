@@ -58,6 +58,8 @@ def create_app(config=None):
     def send_static(path):
         return send_from_directory(static_dir, path)
     
+    
+
     # Frontend routes
     frontend_routes = [
         '/', 
@@ -71,10 +73,14 @@ def create_app(config=None):
         '/settings'
     ]
     
-    for route in frontend_routes:
-        @app.route(route)
-        def serve_frontend(path=route):
+    def serve_frontend_factory(path):
+        def serve_frontend():
             return render_template('index.html')
+        serve_frontend.__name__ = f"serve_frontend_{path}"
+        return serve_frontend
+
+    for route in frontend_routes:
+        app.route(route)(serve_frontend_factory(route))
     
     # Fallback route for any unmatched routes
     @app.route('/<path:path>')
