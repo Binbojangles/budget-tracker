@@ -57,30 +57,16 @@ def create_app(config=None):
     @app.route('/static/<path:path>')
     def send_static(path):
         return send_from_directory(static_dir, path)
-    
-    
 
-    # Frontend routes
-    frontend_routes = [
-        '/', 
-        '/login', 
-        '/register', 
-        '/dashboard', 
-        '/transactions', 
-        '/accounts', 
-        '/budgets', 
-        '/reports', 
-        '/settings'
-    ]
-    
-    def serve_frontend_factory(path):
-        def serve_frontend():
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve_frontend(path):
+        if path.startswith('api/') or path.startswith('static/'):
+         # Serve API routes and static files as usual
+            return app.send_static_file(path)
+        else:
+        # Serve index.html for all other routes
             return render_template('index.html')
-        serve_frontend.__name__ = f"serve_frontend_{path}"
-        return serve_frontend
-
-    for route in frontend_routes:
-        app.route(route)(serve_frontend_factory(route))
     
     # Fallback route for any unmatched routes
     @app.route('/<path:path>')
