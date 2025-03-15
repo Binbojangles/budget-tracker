@@ -1,121 +1,113 @@
 # Budget Tracker
 
-A powerful personal finance application for tracking budgets, expenses, and gaining insights into your spending habits.
+A comprehensive personal finance application that helps you track your expenses, monitor budgets, and visualize your financial health.
 
 ## Features
 
-- **Budget Management**: Create and manage multiple budgets with customizable periods
-- **Category-Based Tracking**: Organize your finances with customizable categories
-- **Visual Reports**: Visualize your spending with interactive charts and graphs
-- **Spending Analysis**: Monitor budget progress and identify areas to save money
-- **Responsive Design**: Works on desktop and mobile devices
+### Dashboard
+- Financial overview with total assets, debt, and net worth
+- Recent transactions listing
+- Spending breakdown charts
+- Budget progress tracking
+- Responsive design for all device sizes
 
-## Getting Started
+### Budget Management
+- Create and manage monthly budgets
+- Add custom categories with spending limits
+- Visual progress bars for budget tracking
+- Edit and delete budget categories
+- Compare spending across different time periods
+
+### Transactions
+- Record income and expenses
+- Categorize transactions for better analysis
+- Filter and search transaction history
+- Import transactions from CSV files
+
+### Reports
+- Spending analysis by category
+- Income vs. expense comparisons
+- Monthly trend reports
+- Export reports as PDF or CSV
+
+### User Experience
+- Responsive design that works on desktop, tablet, and mobile
+- Light and dark mode support for comfortable viewing
+- Intuitive navigation and user-friendly interface
+- Secure authentication system
+
+## Technical Details
+
+### Frontend
+- HTML5, CSS3, and JavaScript
+- Responsive design using custom CSS
+- Chart.js for data visualization
+- Theme switching between light and dark mode
+
+### Backend
+- Python with Flask framework
+- SQLite database (configurable for PostgreSQL)
+- RESTful API architecture
+- JSON Web Token (JWT) authentication
+
+## Recent Improvements
+
+- Added dark mode support across all pages
+- Fixed styling issues with financial overview elements in dashboard
+- Improved budget category management
+- Enhanced chart visualization with better colors
+- Fixed issues with form submissions and cancel buttons
+- Optimized performance for faster loading times
+- Added theme toggle functionality in navigation
+
+## Setup Instructions
 
 ### Prerequisites
-
-- Web browser with JavaScript enabled
-- Local development server or web hosting
+- Python 3.8+
+- Node.js and npm (for frontend dependencies)
 
 ### Installation
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/budget-tracker.git
-   cd budget-tracker
-   ```
+1. Clone the repository
+```
+git clone https://github.com/yourusername/budget-tracker.git
+cd budget-tracker
+```
 
-2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+2. Set up Python virtual environment
+```
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-3. Start the application:
-   ```
-   python app.py
-   ```
+3. Install dependencies
+```
+pip install -r requirements.txt
+```
 
-4. Open your browser and navigate to:
-   ```
-   http://localhost:5000
-   ```
+4. Initialize the database
+```
+flask init-db
+```
 
-## Using the Budget Tracker
+5. Start the development server
+```
+flask run
+```
 
-### Creating a Budget
+6. Open your browser and navigate to `http://localhost:5000`
 
-1. Click the "Create New Budget" button
-2. Enter a name for your budget
-3. Set start and end dates
-4. Add categories with their allocated amounts
-5. Click "Save Budget"
+## Usage
 
-### Adding Categories
-
-1. Open an existing budget
-2. Click "Add Category"
-3. Select a category from the dropdown
-4. Enter the budgeted amount
-5. Click "Add Category"
-
-### Tracking Expenses
-
-1. Navigate to the Expenses section
-2. Click "Add Expense"
-3. Enter the expense details (amount, category, date, etc.)
-4. Click "Save Expense"
-
-### Viewing Reports
-
-1. Go to the Dashboard page
-2. View spending by category in the charts
-3. Toggle between monthly, quarterly, and yearly views
-4. Track your budget progress through the progress bars
-
-## Technology Stack
-
-- **Frontend**: HTML, CSS, JavaScript, Chart.js
-- **Backend**: Python, Flask
-- **Database**: SQLite (development), PostgreSQL (production)
-- **UI Framework**: Custom CSS with responsive design principles
-
-## Project Structure
-
-- `/frontend`: Contains HTML, CSS, and JavaScript files
-  - `/static`: Static assets (JS, CSS, images)
-  - `/templates`: HTML templates
-- `/backend`: Server-side code
-  - `/models`: Database models
-  - `/routes`: API endpoints
-  - `/services`: Business logic
-- `/config`: Configuration files
-- `/utils`: Utility functions and helpers
-
-## Local Storage
-
-The application uses browser local storage to maintain:
-- Budget data
-- Category information
-- User preferences
-- Current session state
-
-This enables persistence between sessions without requiring login.
-
-## Known Issues & Future Improvements
-
-- **Data Export**: Planning to add CSV/PDF export functionality
-- **Dark Mode**: Coming in the next update
-- **Multi-currency Support**: Future enhancement for international users
-- **Budget Templates**: Save and reuse budget templates
-- **Transaction Import**: Import transactions from CSV or bank feeds
+1. Create an account or log in
+2. Set up your accounts (checking, savings, credit cards)
+3. Add your transactions
+4. Create budget categories and set monthly limits
+5. View your financial dashboard to monitor your progress
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
